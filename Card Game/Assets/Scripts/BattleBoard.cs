@@ -41,57 +41,74 @@ public class BattleBoard : MonoBehaviour
         {
             for(int x = 0; x < m_gridSize.x; x++)
             {
-                m_grid[y, x] = new Cell(m_gridSize, m_cellSize);
-                GameObject cell = new GameObject($"Cell [{x},{y}]");
+                GameObject cell = new GameObject($"{x}:{y}");
                 cell.transform.parent = transform;
+                cell.gameObject.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
+                cell.gameObject.tag = Tags.BATTLE_BOARD_CELL_TAG;
                 cell.AddComponent<BoxCollider>();
                 cell.GetComponent<BoxCollider>().size = new Vector3(m_cellSize.x, 1, m_cellSize.y);
                 cell.transform.localPosition = Vector3.zero;
                 Vector2Int centerGridPosition = new Vector2Int(Mathf.FloorToInt(m_gridSize.x / 2), Mathf.FloorToInt(m_gridSize.y / 2));
                 Vector2Int dirFromCenter = new Vector2Int(x,y) - centerGridPosition;
                 cell.transform.position += new Vector3(dirFromCenter.x * m_cellSize.x, 0, dirFromCenter.y * m_cellSize.y);
+                m_grid[y, x] = new Cell(m_gridSize, cell.transform.position, m_cellSize);
             }
         }
+
+
 
     }
 
 
-    public void PlayCardAt(Card _card, Vector2Int _cellPosition)
+    public void PlayCardAt(GameObject _card, Vector2Int _cellPosition)
     {
-        if (m_grid[_cellPosition.x, _cellPosition.y].m_card != null) { Debug.Log($"There is already a card at {_cellPosition}"); return; }
+        if (m_grid[_cellPosition.y, _cellPosition.x].m_card != null) { Debug.Log($"There is already a card at {_cellPosition}"); return; }
+        Debug.Log($"Play {_card.GetComponent<Card>().m_cardName} at {_cellPosition}");
 
-
-        Debug.Log($"Play {_card.m_cardName} at {_cellPosition}");
-        m_grid[_cellPosition.x, _cellPosition.y].InsertCard(_card);
+        _card.transform.position = m_grid[_cellPosition.y, _cellPosition.x].m_worldPosition;
+        if(_cellPosition.y == 0)
+        {
+            _card.transform.rotation = transform.rotation;
+        }
+        else
+        {
+            _card.transform.rotation = Quaternion.Inverse(transform.rotation);
+        }
+        m_grid[_cellPosition.y, _cellPosition.x].InsertCard(_card.GetComponent<Card>());
     }
 
     public void PlayBattlePhaseOfPlayer()
     {
         for(int index = 0; index < m_gridSize.x; index++)
         {
-            if(m_grid[index, m_curPlayerIndex] == null) { continue; }
-            if(m_grid[index, m_curPlayerIndex].m_card == null) { continue; }
+            if(m_grid[m_curPlayerIndex, index] == null) { continue; }
+            if(m_grid[m_curPlayerIndex, index].m_card == null) { continue; }
             CardAtCellCommitAttack(new Vector2Int(index, m_curPlayerIndex));
         }
+        SwitchPlayerIndex();
     }
 
     private void CardAtCellCommitAttack(Vector2Int _cellPosition)
     {
-        if(m_grid[_cellPosition.x, _cellPosition.y].m_card == null) { return; }
+        if(m_grid[_cellPosition.y, _cellPosition.x].m_card == null) { return; }
 
-        m_grid[_cellPosition.x, _cellPosition.y].m_card.Attack(GetOppositeCells(m_grid[_cellPosition.x, _cellPosition.y]));
-
+        m_grid[_cellPosition.y, _cellPosition.x].m_card.Attack(GetOppositeCells(m_grid[_cellPosition.y, _cellPosition.x]));
+        Debug.DrawLine(m_grid[_cellPosition.y, _cellPosition.x].m_worldPosition, m_grid[_cellPosition.y, _cellPosition.x].m_worldPosition + Vector3.up, Color.green, 10);
+        foreach(var cell in GetOppositeCells(m_grid[_cellPosition.y, _cellPosition.x]))
+        {
+            Debug.DrawLine(cell.m_worldPosition, cell.m_worldPosition + Vector3.up, Color.red, 10);
+        }
     }
 
     private Cell[] GetOppositeCells(Cell _cell)
     {
         if(_cell.m_gridPosition.y == 0) 
         { 
-            return new Cell[2]{ m_grid[_cell.m_gridPosition.x, 1], m_grid[_cell.m_gridPosition.x, 2] }; 
+            return new Cell[2]{ m_grid[1, _cell.m_gridPosition.y], m_grid[2, _cell.m_gridPosition.y] }; 
         }
         else 
         { 
-            return new Cell[1] { m_grid[_cell.m_gridPosition.x, 0] }; 
+            return new Cell[1] { m_grid[0, _cell.m_gridPosition.y] }; 
         }
     }
 
@@ -104,7 +121,6 @@ public class BattleBoard : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!displayGizmos) { return; }
-        Gizmos.color = Color.green;
         Vector2 cellSize = new Vector2(transform.lossyScale.x / m_gridSize.x, transform.lossyScale.z / m_gridSize.y);
         for (int x = 0; x < m_gridSize.x; x++)
         {
@@ -113,7 +129,21 @@ public class BattleBoard : MonoBehaviour
                 Vector2Int centerGridPosition = new Vector2Int(Mathf.FloorToInt(m_gridSize.x / 2), Mathf.FloorToInt(m_gridSize.y / 2));
                 Vector2Int dirFromCenter = new Vector2Int(x, y) - centerGridPosition;
                 Vector3 cellPosition = transform.position + new Vector3(dirFromCenter.x * cellSize.x, 0, dirFromCenter.y * cellSize.y);
-                Gizmos.DrawWireCube(cellPosition, new Vector3(cellSize.x, 0.1f, cellSize.y));
+                if (m_grid == null)
+                {
+                    Gizmos.color = Color.yellow;
+                    Gizmos.DrawWireCube(cellPosition, new Vector3(cellSize.x - 0.1f, 0.1f, cellSize.y - 0.1f));
+                }
+                else if(m_grid[y,x].m_card == null)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawWireCube(cellPosition, new Vector3(cellSize.x - 0.1f, 0.1f, cellSize.y - 0.1f));
+                }
+                else
+                {
+                    Gizmos.color = Color.green;
+                    Gizmos.DrawWireCube(cellPosition, new Vector3(cellSize.x - 0.1f, 0.1f, cellSize.y - 0.1f));
+                }
             }
         }
     }

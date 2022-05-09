@@ -7,11 +7,14 @@ TagManager:
   - SquirrelDeck
   - PlayerDeck
   - Card
+  - Bell
+  - BattleBoard
+  - BattleBoardCell
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Unselectable
   - Water
   - UI
   - Selectable

@@ -4,22 +4,28 @@ using UnityEngine;
 
 public class PlayerDeck : MonoBehaviour
 {
-    public Stack<GameObject> cards = new Stack<GameObject>();
+    public Stack<GameObject> cards;
     [SerializeField]
     private GameObject testPrefab;
 
-    private void Start()
+    private void Awake()
     {
-        int currentHeight = 0; 
+        cards = new Stack<GameObject>();
+        int currentHeight = 0;
         for (int i = 0; i < 10; i++)
         {
-            GameObject newSquirrel = Instantiate(testPrefab);
-            newSquirrel.transform.parent = transform;
-            newSquirrel.transform.position = transform.position + Vector3.up * 0.1f * currentHeight;
-            newSquirrel.transform.rotation = transform.rotation;
-            cards.Push(newSquirrel);
+            GameObject testCard = Instantiate(testPrefab);
+            testCard.transform.parent = transform;
+            testCard.transform.position = transform.position + Vector3.up * 0.1f * currentHeight;
+            testCard.transform.rotation = transform.rotation;
+            cards.Push(testCard);
             currentHeight++;
         }
+    }
+
+    private void Start()
+    {
+        
     }
 
     public void ShuffleDeck()
@@ -37,7 +43,6 @@ public class PlayerDeck : MonoBehaviour
             Debug.Log($"At index {i}, {cards.ToArray()[i].GetComponent<Card>().m_cardName}");
         }
     }
-
 
 
 

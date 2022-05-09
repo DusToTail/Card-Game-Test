@@ -18,9 +18,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private Bell bell;
 
+    private GameObject pickedCard;
+    private bool cardPicked;
+
     private void Start()
     {
-        
+        cardPicked = false;
+        pickedCard = null;
     }
 
 
@@ -43,15 +47,29 @@ public class PlayerController : MonoBehaviour
             {
                 if (hit.tag == Tags.PLAYER_DECK_TAG)
                 {
+                    Debug.Log($"Clicked at {hit.name}");
                     hand.DrawOneFromPlayerDeck();
                 }
                 else if (hit.tag == Tags.SQUIRREL_DECK_TAG)
                 {
+                    Debug.Log($"Clicked at {hit.name}");
                     hand.DrawOneSquirrel();
+                }
+                else if(hit.tag == Tags.BELL_TAG)
+                {
+                    Debug.Log($"Clicked at {hit.name}");
+                    bell.RingBell();
                 }
                 else if (hit.tag == Tags.CARD_TAG)
                 {
-
+                    Debug.Log($"Clicked at {hit.name}");
+                    pickedCard = hit;
+                }
+                else if(hit.tag == Tags.BATTLE_BOARD_CELL_TAG)
+                {
+                    Debug.Log($"Clicked at {hit.name}");
+                    board.PlayCardAt(pickedCard, new Vector2Int(int.Parse(hit.name[0].ToString()), int.Parse(hit.name[2].ToString())));
+                    pickedCard = null;
                 }
 
             }
@@ -70,7 +88,7 @@ public class PlayerController : MonoBehaviour
         {
             return hit.collider.gameObject;
         }
-
+        Debug.DrawLine(ray.origin, ray.origin + ray.direction * 100, Color.red, 10);
         return null;
     }
 

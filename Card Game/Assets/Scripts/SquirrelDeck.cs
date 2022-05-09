@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class SquirrelDeck : MonoBehaviour
 {
-    public Stack<GameObject> cards = new Stack<GameObject>();
+    public Stack<GameObject> cards;
     [SerializeField]
     private GameObject squirrelPrefab;
     [SerializeField]
     private int squirrelCount;
 
-    private void Start()
+    private void Awake()
     {
+        cards = new Stack<GameObject>();
         int currentHeight = 0;
-        for(int i = 0; i < squirrelCount; i++)
+        for (int i = 0; i < squirrelCount; i++)
         {
             GameObject newSquirrel = Instantiate(squirrelPrefab);
             newSquirrel.transform.parent = transform;
@@ -22,6 +23,11 @@ public class SquirrelDeck : MonoBehaviour
             cards.Push(newSquirrel);
             currentHeight++;
         }
+    }
+
+    private void Start()
+    {
+        
     }
 
 

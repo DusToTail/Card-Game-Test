@@ -24,11 +24,27 @@ public class Card : MonoBehaviour
 
     public List<Ability> abilities;
 
-    private void Start()
+    private void Awake()
     {
-        GetComponent<BoxCollider>().size = new Vector3(m_cardSize.x, 1, m_cardSize.y);
+        gameObject.layer = LayerMask.NameToLayer(Tags.UNSELECTABLE_LAYER);
         transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = m_portrait;
 
+        m_curHealth = m_initialHealth;
+        m_curAttackDamage = m_initialAttackDamage;
+    }
+
+    private void Start()
+    {
+        
+
+    }
+
+    private void Update()
+    {
+        if(m_curHealth <= 0)
+        {
+            Die();
+        }
     }
 
     public void Attack(Cell[] _targets)
@@ -54,9 +70,19 @@ public class Card : MonoBehaviour
         
     }
 
+    private void Die()
+    {
+        Debug.Log($"{m_cardName} dies");
+        OnDeath();
+        Destroy(gameObject);
+    }
+
     public void OnDrawn()
     {
         Debug.Log($"{m_cardName} does something when drawn");
+
+        m_curHealth = m_initialHealth;
+        m_curAttackDamage = m_initialAttackDamage;
     }
 
     public void OnPlayed()
@@ -74,9 +100,9 @@ public class Card : MonoBehaviour
         Debug.Log($"{m_cardName} does something when attacked");
     }
 
-    public void OnKilled()
+    public void OnDeath()
     {
-        Debug.Log($"{m_cardName} does something when killed");
+        Debug.Log($"{m_cardName} does something when dying");
     }
 
     public void OnSacrificed()
