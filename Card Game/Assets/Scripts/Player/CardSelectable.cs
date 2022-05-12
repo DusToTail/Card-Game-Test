@@ -43,6 +43,9 @@ public class CardSelectable : MonoBehaviour, ISelectable
 
     public void PickCardUp()
     {
+        // Trigger animation to move from hand to hold position
+
+
         gameObject.transform.parent = holdUpPosition;
         gameObject.transform.localPosition = Vector3.zero;
         gameObject.layer = LayerMask.NameToLayer(Tags.UNSELECTABLE_LAYER);
@@ -53,6 +56,9 @@ public class CardSelectable : MonoBehaviour, ISelectable
 
     public void PlayCardOnBoard(ICell cell)
     {
+        // Trigger animation to move from current position to right above the cell
+
+
         board.PlayCardAtCell(gameObject, cell);
         player.hand.AssignPickedUpCard(null);
         isPicked = false;
@@ -62,6 +68,9 @@ public class CardSelectable : MonoBehaviour, ISelectable
 
     public void PutCardBack()
     {
+        // Trigger animation to move from hold position back to its original position on hand
+
+
         gameObject.transform.parent = defaultPosition;
         gameObject.transform.localPosition = Vector3.zero;
         gameObject.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);

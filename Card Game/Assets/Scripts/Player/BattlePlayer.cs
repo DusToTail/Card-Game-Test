@@ -11,18 +11,8 @@ public class BattlePlayer : MonoBehaviour
     public SquirrelDeck squirrelDeck;
     public PlayerHand hand;
     public BattleBoard board;
-
-    public enum State
-    {
-        Draw,
-        Prepare,
-        Battle,
-        End
-    }
-
-    private State _state;
-
-    private SelectManager _selectManager;
+    
+    public SelectManager _selectManager { get; private set; }
 
     private void Start()
     {

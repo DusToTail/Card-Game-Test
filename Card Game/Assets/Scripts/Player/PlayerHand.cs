@@ -9,6 +9,18 @@ public class PlayerHand : MonoBehaviour
     public int initialDrawNumber;
     public GameObject pickedCard { get; private set; }
 
+    [SerializeField]
+    private GameObject toHandMovementTrigger;
+    [SerializeField]
+    private GameObject inHandMovementTrigger;
+
+    [SerializeField]
+    private Transform spreadCircleCenterPosition;
+    [SerializeField]
+    private float maxCardAngle;
+    [SerializeField]
+    private float maxHandAngle;
+
     private void Start()
     {
 
@@ -22,8 +34,8 @@ public class PlayerHand : MonoBehaviour
         card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
         cards.Add(card);
 
-        // Trigger animation to move the card to hand
-        card.transform.localPosition = Vector3.zero;
+        // Trigger animation to move the card to hand and adjust orientation
+        MoveCardToHand();
     }
 
     public void AssignPickedUpCard(GameObject card)
@@ -32,21 +44,7 @@ public class PlayerHand : MonoBehaviour
        pickedCard = card;
     }
 
-    /*
-    private void MoveCardAwayFrom(GameObject _card, bool _fromDeck)
-    {
-        if (_fromDeck)
-        {
-            while (Vector3.Distance(transform.position, _card.transform.position) < 20)
-            {
-                _card.transform.position -= _card.transform.forward * 0.01f;
-            }
-            _card.transform.position = rightPosition.position;
-            _card.transform.rotation = Quaternion.LookRotation(transform.up);
-        }
-    }
-
-    private void AdjustCardsInHand()
+    private void MoveCardToHand()
     {
         float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
         float totalHandAngle = cards.Count * maxCardAngle;
@@ -59,34 +57,31 @@ public class PlayerHand : MonoBehaviour
             float x = spreadCircleCenterPosition.position.x + Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
             float y = spreadCircleCenterPosition.position.y + Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
             cardPositions[i] = new Vector3(x, y, transform.position.z);
-            Debug.DrawLine(cardPositions[i] + Vector3.forward, cardPositions[i] + Vector3.back, Color.yellow, 10);
+            Debug.DrawLine(cardPositions[i] + Vector3.forward, cardPositions[i] + Vector3.back, Color.yellow, 1);
         }
-        for (int i = 0; i < cardPositions.Length; i++)
+        for (int i = 0; i < cards.Count; i++)
         {
-            cards[i].transform.position = Vector3.Lerp(cards[i].transform.position, cardPositions[i], 1);
-            cards[i].transform.rotation = Quaternion.LookRotation(Camera.main.transform.up);
+            if(i < cards.Count - 1)
+            {
+                // In hand to adjust for incoming card
+                inHandMovementTrigger.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
+                inHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
+            }
+            else
+            {
+                // From deck
+                toHandMovementTrigger.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
+                toHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
+            }
+            
         }
     }
 
-    public AttackCard GetCardAtMousePosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
-
-        RaycastHit hit;
-        Physics.Raycast(ray, out hit, 1000,  LayerMask.GetMask(Tags.SELECTABLE_LAYER), QueryTriggerInteraction.Ignore);
-        if(hit.collider.gameObject.GetComponent<AttackCard>() != null)
-        {
-            return hit.collider.gameObject.GetComponent<AttackCard>();
-        }
-
-        return null;
-    }
-
+    
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.magenta;
-        float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
-        Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
+        //Gizmos.color = Color.magenta;
+        //float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
+        //Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
     }
-    */
 }
