@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4966624329971690377
+--- !u!1 &8771534866035997510
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,51 +8,51 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4966624329971690486}
-  - component: {fileID: 4966624329971690485}
-  - component: {fileID: 4966624329971690484}
-  - component: {fileID: 4966624329971690379}
-  - component: {fileID: 4966624329971690378}
-  - component: {fileID: 6742729980744276106}
-  - component: {fileID: 6301317195732447830}
+  - component: {fileID: 8771534866035997505}
+  - component: {fileID: 8771534866035997530}
+  - component: {fileID: 8771534866035997509}
+  - component: {fileID: 8771534866035997508}
+  - component: {fileID: 8771534866035997511}
+  - component: {fileID: 8771534866035997528}
+  - component: {fileID: 8771534866035997531}
   m_Layer: 3
-  m_Name: Squirrel
+  m_Name: Wolf
   m_TagString: Card
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4966624329971690486
+--- !u!4 &8771534866035997505
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.62, z: 0}
+  m_GameObject: {fileID: 8771534866035997510}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -24.56, y: 0, z: -9.1}
   m_LocalScale: {x: 2.7, y: 0.01, z: 4.5}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 4966624331819651710}
+  - {fileID: 8771534866634679119}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4966624329971690485
+--- !u!33 &8771534866035997530
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
+  m_GameObject: {fileID: 8771534866035997510}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &4966624329971690484
+--- !u!23 &8771534866035997509
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
+  m_GameObject: {fileID: 8771534866035997510}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 1
@@ -88,45 +88,45 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4966624329971690379
+--- !u!65 &8771534866035997508
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
+  m_GameObject: {fileID: 8771534866035997510}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4966624329971690378
+--- !u!114 &8771534866035997511
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
+  m_GameObject: {fileID: 8771534866035997510}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b6b144d8844451b42865ab5f216fbee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardName: Squirrel
-  cardDescription: A squirrel. Useful for sacrifices
-  initialHealth: 1
-  initialAttackDamage: 0
+  cardName: Wolf
+  cardDescription: A wolf
+  initialHealth: 2
+  initialAttackDamage: 3
   abilityObject: {fileID: 0}
-  sacrificeNum: 0
+  sacrificeNum: 2
   cardScriptableObject: {fileID: 11400000, guid: 8bf53f3c7fb5e454b98c4f8f4b1a91de, type: 2}
---- !u!114 &6742729980744276106
+--- !u!114 &8771534866035997528
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
+  m_GameObject: {fileID: 8771534866035997510}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4bb13c5f68d3e7429edc8348edb125d, type: 3}
@@ -136,19 +136,19 @@ MonoBehaviour:
   holdUpPosition: {fileID: 0}
   board: {fileID: 0}
   player: {fileID: 0}
---- !u!114 &6301317195732447830
+--- !u!114 &8771534866035997531
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624329971690377}
+  m_GameObject: {fileID: 8771534866035997510}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f649d53d0f90f2a4c9155103b26381b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &4966624331819651709
+--- !u!1 &8771534866634679118
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -156,8 +156,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4966624331819651710}
-  - component: {fileID: 4966624331819651711}
+  - component: {fileID: 8771534866634679119}
+  - component: {fileID: 8771534866634679116}
   m_Layer: 0
   m_Name: Portrait
   m_TagString: Untagged
@@ -165,28 +165,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4966624331819651710
+--- !u!4 &8771534866634679119
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624331819651709}
+  m_GameObject: {fileID: 8771534866634679118}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.1, z: 0.2}
   m_LocalScale: {x: 0.8, y: 1, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4966624329971690486}
+  m_Father: {fileID: 8771534866035997505}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &4966624331819651711
+--- !u!212 &8771534866634679116
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966624331819651709}
+  m_GameObject: {fileID: 8771534866634679118}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0

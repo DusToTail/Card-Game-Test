@@ -4,75 +4,35 @@ using UnityEngine;
 
 public class PlayerHand : MonoBehaviour
 {
+    [HideInInspector]
     public List<GameObject> cards = new List<GameObject>();
-    [SerializeField]
-    private PlayerDeck playerDeck;
-    [SerializeField]
-    private SquirrelDeck squirrelDeck;
-    [SerializeField]
-    private int initialCardNumber;
-
-    [SerializeField]
-    private Transform abovePosition;
-    [SerializeField]
-    private Transform rightPosition;
-    [SerializeField]
-    private Transform spreadCircleCenterPosition;
-
-    [SerializeField]
-    private float maxHandAngle;
-    [SerializeField]
-    private float maxCardAngle;
-
-    private bool isAdjustingCardsInHand;
+    public int initialDrawNumber;
+    public GameObject pickedCard { get; private set; }
 
     private void Start()
     {
-        DrawInitialHand();
+
     }
 
-    private void LateUpdate()
+    public void AddCardToHand(GameObject card)
     {
-        if(isAdjustingCardsInHand)
-        {
-            isAdjustingCardsInHand = false;
-            AdjustCardsInHand();
-        }
-    }
+        if(card == null) { return; }
 
-    public void DrawInitialHand()
-    {
-        DrawOneSquirrel();
-        for(int i = 0; i < initialCardNumber - 1; i++)
-        {
-            DrawOneFromPlayerDeck();
-        }
-    }
-
-    public void DrawOneFromPlayerDeck()
-    {
-        if(playerDeck.cards.Count == 0) { return; }
-        GameObject card = playerDeck.cards.Pop();
         card.transform.parent = transform;
         card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
-        card.GetComponent<Card>().OnDrawn();
         cards.Add(card);
-        MoveCardAwayFrom(card, true);
-        isAdjustingCardsInHand = true;
+
+        // Trigger animation to move the card to hand
+        card.transform.localPosition = Vector3.zero;
     }
 
-    public void DrawOneSquirrel()
+    public void AssignPickedUpCard(GameObject card)
     {
-        if (squirrelDeck.cards.Count == 0) { return; }
-        GameObject card = squirrelDeck.cards.Pop();
-        card.transform.parent = transform;
-        card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
-        card.GetComponent<Card>().OnDrawn();
-        cards.Add(card);
-        MoveCardAwayFrom(card, true);
-        isAdjustingCardsInHand = true;
+        if(card == null) { pickedCard = null; }
+       pickedCard = card;
     }
 
+    /*
     private void MoveCardAwayFrom(GameObject _card, bool _fromDeck)
     {
         if (_fromDeck)
@@ -108,15 +68,15 @@ public class PlayerHand : MonoBehaviour
         }
     }
 
-    public Card GetCardAtMousePosition()
+    public AttackCard GetCardAtMousePosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);
 
         RaycastHit hit;
         Physics.Raycast(ray, out hit, 1000,  LayerMask.GetMask(Tags.SELECTABLE_LAYER), QueryTriggerInteraction.Ignore);
-        if(hit.collider.gameObject.GetComponent<Card>() != null)
+        if(hit.collider.gameObject.GetComponent<AttackCard>() != null)
         {
-            return hit.collider.gameObject.GetComponent<Card>();
+            return hit.collider.gameObject.GetComponent<AttackCard>();
         }
 
         return null;
@@ -124,11 +84,9 @@ public class PlayerHand : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        /*
         Gizmos.color = Color.magenta;
         float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
         Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
-        */
     }
-
+    */
 }
