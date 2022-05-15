@@ -12,7 +12,7 @@ public class PlayerHand : MonoBehaviour
     [SerializeField]
     private GameObject toHandMovementTrigger;
     [SerializeField]
-    private GameObject inHandMovementTrigger;
+    private GameObject inHandMovementTriggers;
 
     [SerializeField]
     private Transform spreadCircleCenterPosition;
@@ -64,14 +64,20 @@ public class PlayerHand : MonoBehaviour
             if(i < cards.Count - 1)
             {
                 // In hand to adjust for incoming card
-                inHandMovementTrigger.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
-                inHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
+                if(inHandMovementTriggers.transform.childCount < cards.Count)
+                {
+                    GameObject newTrigger = Instantiate(inHandMovementTriggers.transform.GetChild(0).gameObject, inHandMovementTriggers.transform);
+                    newTrigger.name = inHandMovementTriggers.transform.GetChild(0).name;
+                }
+                inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
+                inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().Trigger();
             }
             else
             {
                 // From deck
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
+
             }
             
         }
@@ -80,8 +86,8 @@ public class PlayerHand : MonoBehaviour
     
     private void OnDrawGizmos()
     {
-        //Gizmos.color = Color.magenta;
-        //float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
-        //Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
+        Gizmos.color = Color.magenta;
+        float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
+        Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
     }
 }

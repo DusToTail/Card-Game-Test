@@ -39,54 +39,35 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
-    public Vector3 GetCubicBezierCurveDirection(float t)
+
+    public Quaternion GetCubicBezierCurveRotation(float t)
     {
-        Vector3 result = Vector3.zero;
+        Quaternion result = new Quaternion();
         if (controlPoints == null) { return result; }
         if (controlPoints.Length < 4) { return result; }
         t = Mathf.Clamp01(t);
-        float v = 0;
-        if(segments == 0)
-        {
-            v = Mathf.Clamp01(t - 0.1f);
-        }
-        else
-        {
-            v = Mathf.Clamp01(t - 1/segments);
-        }
-        Vector3 p0 = controlPoints[0].position;
-        Vector3 p1 = controlPoints[1].position;
-        Vector3 p2 = controlPoints[2].position;
-        Vector3 p3 = controlPoints[3].position;
+        Quaternion q0 = Quaternion.Lerp(controlPoints[0].rotation, controlPoints[1].rotation, t);
+        Quaternion q1 = Quaternion.Lerp(controlPoints[1].rotation, controlPoints[2].rotation, t);
+        Quaternion q2 = Quaternion.Lerp(controlPoints[2].rotation, controlPoints[3].rotation, t);
+        Quaternion q01 = Quaternion.Lerp(q0, q1, t);
+        Quaternion q12 = Quaternion.Lerp(q1, q2, t);
+        Quaternion q012 = Quaternion.Lerp(q01, q12, t);
 
-        result = ((1 - t) * (1 - t) * (1 - t) * p0) + (3 * (1 - t) * (1 - t) * t * p1) + (3 * (1 - t) * t * t * p2) + (t * t * t * p3);
-        Vector3 prev = ((1 - v) * (1 - v) * (1 - v) * p0) + (3 * (1 - v) * (1 - v) * v * p1) + (3 * (1 - v) * v * v * p2) + (v * v * v * p3);
-
-        return (result - prev).normalized;
+        result = q012 ;
+        return result;
     }
 
-    public Vector3 GetQuadraticBezierCurveDirection(float t)
+    public Quaternion GetQuadraticBezierCurveRotation(float t)
     {
-        Vector3 result = Vector3.zero;
+        Quaternion result = new Quaternion();
         if (controlPoints == null) { return result; }
         if (controlPoints.Length < 3) { return result; }
         t = Mathf.Clamp01(t);
-        float v = 0;
-        if (segments == 0)
-        {
-            v = Mathf.Clamp01(t - 0.1f);
-        }
-        else
-        {
-            v = Mathf.Clamp01(t - 1 / segments);
-        }
-        Vector3 p0 = controlPoints[0].position;
-        Vector3 p1 = controlPoints[1].position;
-        Vector3 p2 = controlPoints[2].position;
-
-        result = ((1 - t) * (1 - t) * p0) + (2 * (1 - t) * t * p1) + (t * t * p2);
-        Vector3 prev = ((1 - v) * (1 - v) * p0) + (2 * (1 - v) * v * p1) + (v * v * p2);
-        return (result - prev).normalized;
+        Quaternion q0 = Quaternion.Lerp(controlPoints[0].rotation, controlPoints[1].rotation, t);
+        Quaternion q1 = Quaternion.Lerp(controlPoints[1].rotation, controlPoints[2].rotation, t);
+        Quaternion q01 = Quaternion.Lerp(q0, q1, t);
+        result = q01;
+        return result;
     }
 
 

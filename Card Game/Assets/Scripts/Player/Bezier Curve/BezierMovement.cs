@@ -50,12 +50,12 @@ public class BezierMovement : MonoBehaviour, IMovementTrigger
         if(bezierCurve.controlPoints.Length == 4)
         {
             moveObject.transform.position = bezierCurve.CubicBezierCurveLerp(t);
-            moveObject.transform.rotation = Quaternion.LookRotation(bezierCurve.GetCubicBezierCurveDirection(t));
+            moveObject.transform.rotation = bezierCurve.GetCubicBezierCurveRotation(t);
         }
         else if(bezierCurve.controlPoints.Length == 3)
         {
             moveObject.transform.position = bezierCurve.QuadraticBezierCurveLerp(t);
-            moveObject.transform.rotation = Quaternion.LookRotation(bezierCurve.GetQuadraticBezierCurveDirection(t));
+            moveObject.transform.rotation = bezierCurve.GetQuadraticBezierCurveRotation(t);
         }
         
     }

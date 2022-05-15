@@ -47,7 +47,7 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
             GameObject newSquirrel = Instantiate(prefab);
             newSquirrel.transform.parent = transform;
             newSquirrel.transform.position = transform.position + Vector3.up * 0.1f * _curHeight;
-            newSquirrel.transform.rotation = transform.rotation;
+            newSquirrel.transform.rotation = Quaternion.LookRotation(-transform.forward, -transform.up);
             newSquirrel.GetComponent<AttackCard>().InitializeStats();
             cards.Push(newSquirrel);
             _curHeight++;

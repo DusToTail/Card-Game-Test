@@ -46,7 +46,7 @@ public class PlayerDeck : MonoBehaviour, ISelectable
             GameObject newCard = Instantiate(deck.transform.GetChild(i).gameObject);
             newCard.transform.parent = transform;
             newCard.transform.position = transform.position + Vector3.up * 0.1f * _curHeight;
-            newCard.transform.rotation = transform.rotation;
+            newCard.transform.rotation = Quaternion.LookRotation(-transform.forward, -transform.up);
             newCard.GetComponent<AttackCard>().InitializeStats();
             cards.Push(newCard);
             _curHeight++;
