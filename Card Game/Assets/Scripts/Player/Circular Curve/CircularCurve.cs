@@ -16,20 +16,23 @@ public class CircularCurve : MonoBehaviour
     {
         Vector3 result = Vector3.zero;
         if (circleCenter == null || startPoint == null || endPoint == null) { return result; }
-        Vector3 sc = startPoint.position - circleCenter.position;
-        Vector3 es = endPoint.position - startPoint.position;
+        Vector3 centerToStart = startPoint.position - circleCenter.position;
+        Vector3 startToEnd = endPoint.position - startPoint.position;
+        float radius = centerToStart.magnitude;
+        Vector3 tempResult = startPoint.position + startToEnd * Mathf.Clamp01(t);
+        Vector3 centerToTemp = tempResult - circleCenter.position;
+        result = circleCenter.position + centerToTemp.normalized * radius;
+        Debug.Log($"Start Point {startPoint.position}");
+        Debug.Log($"End Point {endPoint.position}");
+        Debug.Log($"Circle Center Point {circleCenter.position}");
 
-        float radius = sc.magnitude;
-        Vector3 tempResult = startPoint.position + es * Mathf.Clamp01(t);
-        Vector3 tc = tempResult - circleCenter.position;
-        result = circleCenter.position + tc.normalized * radius;
+        Debug.Log($"t is {t}");
 
-        Debug.Log(sc);
-        Debug.Log(es);
-        Debug.Log(radius);
-        Debug.Log(tempResult);
-        Debug.Log(tc);
-        Debug.Log(result);
+        Debug.Log($"Center To Start {centerToStart}");
+        Debug.Log($"Start To End {startToEnd}");
+        Debug.Log($"tempResult {tempResult}");
+        Debug.Log($"Result {result}");
+
         return result;
     }
 

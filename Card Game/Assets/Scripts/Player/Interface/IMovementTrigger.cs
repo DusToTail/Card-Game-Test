@@ -4,7 +4,10 @@ using UnityEngine;
 
 public interface IMovementTrigger : ITrigger
 {
+    public GameObject nextMovementTrigger { get; set; }
     public void InitializeMoveObjectTowards(GameObject moveObject, Transform destination);
     public void InitializeMoveObjectTowards(GameObject moveObject, Vector3 destination);
+    public void InitializeNextMovementTrigger(IMovementTrigger nextMovementTrigger);
+    public void ReInitializeSelf();
 
 }

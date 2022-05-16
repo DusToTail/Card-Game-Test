@@ -55,20 +55,23 @@ public class PlayerHand : MonoBehaviour
         {
             float angle = 90 - totalHandAngle / cards.Count * i + totalHandAngle / 2;
             float x = spreadCircleCenterPosition.position.x + Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
-            float y = spreadCircleCenterPosition.position.y + Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
-            cardPositions[i] = new Vector3(x, y, transform.position.z);
+            float y = spreadCircleCenterPosition.position.y + radius + Mathf.Cos(Mathf.Deg2Rad * angle) * radius / 10;
+            float z = spreadCircleCenterPosition.position.z + radius - Mathf.Cos(Mathf.Deg2Rad * angle) * radius / 10;
+
+            cardPositions[i] = new Vector3(x, y, z);
             Debug.DrawLine(cardPositions[i] + Vector3.forward, cardPositions[i] + Vector3.back, Color.yellow, 1);
         }
-        for (int i = 0; i < cards.Count; i++)
+        for (int i = cards.Count - 1; i >= 0; i--)
         {
-            if(i < cards.Count - 1)
+            if (inHandMovementTriggers.transform.childCount < cards.Count)
+            {
+                GameObject newTrigger = Instantiate(inHandMovementTriggers.transform.GetChild(0).gameObject, inHandMovementTriggers.transform);
+                newTrigger.name = inHandMovementTriggers.transform.GetChild(0).name;
+            }
+
+            if (i < cards.Count - 1)
             {
                 // In hand to adjust for incoming card
-                if(inHandMovementTriggers.transform.childCount < cards.Count)
-                {
-                    GameObject newTrigger = Instantiate(inHandMovementTriggers.transform.GetChild(0).gameObject, inHandMovementTriggers.transform);
-                    newTrigger.name = inHandMovementTriggers.transform.GetChild(0).name;
-                }
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().Trigger();
             }
@@ -76,6 +79,8 @@ public class PlayerHand : MonoBehaviour
             {
                 // From deck
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
+                inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
+                toHandMovementTrigger.GetComponent<IMovementTrigger>().nextMovementTrigger = inHandMovementTriggers.transform.GetChild(i).gameObject;
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
 
             }
@@ -88,6 +93,22 @@ public class PlayerHand : MonoBehaviour
     {
         Gizmos.color = Color.magenta;
         float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
-        Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
+        Vector3[] vertices = new Vector3[20];
+        for(int index = 0; index < 20; index++)
+        {
+            float angle = 90 - maxHandAngle / 20 * index + maxHandAngle / 2;
+            float x = spreadCircleCenterPosition.position.x + Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
+            float y = spreadCircleCenterPosition.position.y + radius + Mathf.Cos(Mathf.Deg2Rad * angle) * radius / 10;
+            float z = spreadCircleCenterPosition.position.z + radius - Mathf.Cos(Mathf.Deg2Rad * angle) * radius / 10;
+
+            vertices[index] = new Vector3(x, y, z);
+
+        }
+
+        for(int index = 0; index < 19; index++)
+        {
+            Gizmos.DrawLine(vertices[index], vertices[index + 1]);
+        }
+        //Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
     }
 }
