@@ -7,6 +7,10 @@ public class PlayerDeck : MonoBehaviour, ISelectable
     public Stack<GameObject> cards = new Stack<GameObject>();
     public GameObject deck;
     public BattlePlayer battlePlayer;
+
+    [SerializeField]
+    private GameObject selectResponse;
+
     private int _curHeight = 0;
 
     private void Awake()
@@ -97,17 +101,24 @@ public class PlayerDeck : MonoBehaviour, ISelectable
 
     public void OnSelect()
     {
-
+        if(selectResponse == null) { return; }
+        selectResponse.GetComponent<ISelectResponse>().OnSelect();
     }
 
     public void OnDeselect()
     {
+        if (selectResponse == null) { return; }
+        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
 
     }
 
     public void OnClick()
     {
-        Debug.Log($"Clicked on {this.gameObject.name}");
-        battlePlayer.DrawOneFromPlayerDeck();
+        if(battlePlayer.selectManager.state == SelectManager.State.DrawFromDeck)
+        {
+            Debug.Log($"Clicked on {this.gameObject.name}");
+            battlePlayer.DrawOneFromPlayerDeck();
+        }
+        
     }
 }

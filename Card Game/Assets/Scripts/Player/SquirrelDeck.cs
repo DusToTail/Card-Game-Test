@@ -6,8 +6,11 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
 {
     public Stack<GameObject> cards = new Stack<GameObject>();
     public GameObject prefab;
-    public BattlePlayer battlePlayer;
+    public BattlePlayer player;
     public int buildNum;
+
+    [SerializeField]
+    private GameObject selectResponse;
 
     private int _curHeight = 0;
 
@@ -56,15 +59,23 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
 
     public void OnSelect()
     {
+        if (selectResponse == null) { return; }
+        selectResponse.GetComponent<ISelectResponse>().OnSelect();
     }
 
     public void OnDeselect()
     {
+        if (selectResponse == null) { return; }
+        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
+
     }
 
     public void OnClick()
     {
-        Debug.Log($"Clicked on {this.gameObject.name}");
-        battlePlayer.DrawOneSquirrel();
+        if(player.selectManager.state == SelectManager.State.DrawFromDeck)
+        {
+            Debug.Log($"Clicked on {this.gameObject.name}");
+            player.DrawOneSquirrel();
+        }
     }
 }

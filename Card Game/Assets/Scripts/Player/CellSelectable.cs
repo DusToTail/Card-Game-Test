@@ -31,7 +31,11 @@ public class CellSelectable : MonoBehaviour, ISelectable
         if(player == null) { return; }
         if(player.hand == null) { return; }
         if(player.hand.pickedCard == null) { return;}
-        player.hand.pickedCard.GetComponent<CardSelectable>().PlayCardOnBoard(cell);
+
+        if(player.selectManager.state == SelectManager.State.CardToBoard)
+        {
+            player.hand.pickedCard.GetComponent<CardSelectable>().PlayCardOnBoard(cell);
+        }
 
     }
 

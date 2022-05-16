@@ -29,9 +29,18 @@ public class CircularMovement : MonoBehaviour, IMovementTrigger
         if (t >= 1)
         {
             movementFinished = true;
+            moveObject = null;
             if(nextMovementTrigger != null)
                 InitializeNextMovementTrigger(nextMovementTrigger.GetComponent<IMovementTrigger>());
         }
+    }
+
+    public void InitializeMoveObject(GameObject moveObject)
+    {
+        t = 0;
+        this.moveObject = moveObject;
+        circularCurve.startPoint.position = moveObject.transform.position;
+        circularCurve.startPoint.rotation = Quaternion.LookRotation(moveObject.transform.position - circularCurve.circleCenter.position, rotationTransform.up);
     }
 
     public void InitializeMoveObjectTowards(GameObject moveObject, Transform destination)

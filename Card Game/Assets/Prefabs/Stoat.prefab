@@ -216,8 +216,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4bb13c5f68d3e7429edc8348edb125d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultPosition: {fileID: 0}
-  holdUpPosition: {fileID: 0}
+  selectResponse: {fileID: 0}
+  toBoardMovementTrigger: {fileID: 0}
+  toHoldMovementTrigger: {fileID: 0}
+  backMovementTrigger: {fileID: 0}
   board: {fileID: 0}
   player: {fileID: 0}
 --- !u!114 &7155341138269284322

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BezierMovement : MonoBehaviour, IMovementTrigger
+public class OneWayBezierMovement : MonoBehaviour, IMovementTrigger
 {
     public GameObject nextMovementTrigger { get; set; }
     [SerializeField]
@@ -27,10 +27,19 @@ public class BezierMovement : MonoBehaviour, IMovementTrigger
         if(t >= 1)
         {
             movementFinished = true;
+            moveObject = null;
             if (nextMovementTrigger != null)
                 InitializeNextMovementTrigger(nextMovementTrigger.GetComponent<IMovementTrigger>());
         }
 
+    }
+
+    public void InitializeMoveObject(GameObject moveObject)
+    {
+        t = 0;
+        this.moveObject = moveObject;
+        bezierCurve.controlPoints[0].position = moveObject.transform.position;
+        bezierCurve.controlPoints[0].rotation = moveObject.transform.rotation;
     }
 
     public void InitializeMoveObjectTowards(GameObject moveObject, Transform destination)
@@ -38,7 +47,9 @@ public class BezierMovement : MonoBehaviour, IMovementTrigger
         t = 0;
         this.moveObject = moveObject;
         bezierCurve.controlPoints[0].position = moveObject.transform.position;
+        bezierCurve.controlPoints[0].rotation = moveObject.transform.rotation;
         bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].position = destination.position;
+        bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].rotation = destination.rotation;
     }
 
     public void InitializeMoveObjectTowards(GameObject moveObject, Vector3 destination)
@@ -46,6 +57,7 @@ public class BezierMovement : MonoBehaviour, IMovementTrigger
         t = 0;
         this.moveObject = moveObject;
         bezierCurve.controlPoints[0].position = moveObject.transform.position;
+        bezierCurve.controlPoints[0].rotation = moveObject.transform.rotation;
         bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].position = destination;
     }
 
@@ -80,6 +92,11 @@ public class BezierMovement : MonoBehaviour, IMovementTrigger
         {
             moveObject.transform.position = bezierCurve.QuadraticBezierCurveLerp(t);
             moveObject.transform.rotation = bezierCurve.GetQuadraticBezierCurveRotation(t);
+        }
+        else if(bezierCurve.controlPoints.Length == 2)
+        {
+            moveObject.transform.position = bezierCurve.LinearBezierCurveLerp(t);
+            moveObject.transform.rotation = bezierCurve.GetLinearBezierCurveRotation(t);
         }
         
     }

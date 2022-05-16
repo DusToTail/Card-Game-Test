@@ -39,6 +39,19 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
+    public Vector3 LinearBezierCurveLerp(float t)
+    {
+        Vector3 result = Vector3.zero;
+        if (controlPoints == null) { return result; }
+        if (controlPoints.Length < 2) { return result; }
+        t = Mathf.Clamp01(t);
+        Vector3 p0 = controlPoints[0].position;
+        Vector3 p1 = controlPoints[1].position;
+
+        result = (1 - t) * p0 + t * p1;
+        return result;
+    }
+
 
     public Quaternion GetCubicBezierCurveRotation(float t)
     {
@@ -70,22 +83,35 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
+    public Quaternion GetLinearBezierCurveRotation(float t)
+    {
+        Quaternion result = new Quaternion();
+        if (controlPoints == null) { return result; }
+        if (controlPoints.Length < 2) { return result; }
+        t = Mathf.Clamp01(t);
+        Quaternion q0 = Quaternion.Lerp(controlPoints[0].rotation, controlPoints[1].rotation, t);
+        result = q0;
+        return result;
+    }
+
 
     public void OnDrawGizmos()
     {
         if (!displayGizmos) { return; }
         if(segments == 0) { return; }
         Gizmos.color = Color.red;
-        Vector3[] vertices = new Vector3[segments]; 
-        for(int i = 0; i < segments; i++)
+        Vector3[] vertices = new Vector3[segments + 1]; 
+        for(int i = 0; i < segments + 1; i++)
         {
-            if(controlPoints.Length == 4)
+            if (controlPoints.Length == 4)
                 vertices[i] = CubicBezierCurveLerp((float)i * 1 / segments);
-            else if(controlPoints.Length == 3)
+            else if (controlPoints.Length == 3)
                 vertices[i] = QuadraticBezierCurveLerp((float)i * 1 / segments);
+            else if (controlPoints.Length == 2)
+                vertices[i] = LinearBezierCurveLerp((float)i * 1 / segments);
         }
 
-        for(int i = 0; i < segments - 1; i++)
+        for(int i = 0; i < segments; i++)
         {
             Gizmos.DrawLine(vertices[i], vertices[i + 1]);
         }

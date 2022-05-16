@@ -6,26 +6,16 @@ using UnityEngine;
 public class BattleBoard : MonoBehaviour
 {
     public IGridController gridController { get; private set; }
-    public IPhaseController phaseController { get; private set; }
 
     [SerializeField]
     private BoardScriptableObject boardSetting;
     [SerializeField]
     private CardScriptableObject cardSetting;
+    [SerializeField]
+    private GameObject cardMoverOnBoard;
 
     [SerializeField]
     private bool displayGizmos;
-
-    
-
-
-    private void OnEnable()
-    {
-    }
-
-    private void OnDisable()
-    {
-    }
 
     private void Awake()
     {
@@ -42,7 +32,6 @@ public class BattleBoard : MonoBehaviour
     {
         boardSetting.cellSize = new Vector2(transform.lossyScale.x / boardSetting.gridSize.x, transform.lossyScale.z / boardSetting.gridSize.y);
         gridController = new TwoDimensionGridController(transform, boardSetting.gridSize, boardSetting.cellSize);
-        phaseController = new BattlePhaseController(this);
 
         // Clear Childs
         int count = transform.childCount;
@@ -85,29 +74,6 @@ public class BattleBoard : MonoBehaviour
     public ICell GetCellAtCoordinateXZ(Vector3 worldPosition)
     {
         return gridController.GetCellAtCoordinateXZ(worldPosition);
-    }
-
-    public void PlayCardAtCell(GameObject card, ICell cell)
-    {
-        if(cell == null) { return; }
-        if(GetCardAtCell(cell) != null) { return;}
-
-        int childIndex = cell.gridPosition.y * gridController.gridSize.x + cell.gridPosition.x;
-        GameObject childCell = transform.GetChild(childIndex).gameObject;
-
-        card.transform.position = cell.worldPosition + Vector3.up;
-        if (cell.gridPosition.y == 0)
-        {
-            // For player
-            card.transform.rotation = transform.rotation;
-            card.transform.parent = childCell.transform;
-        }
-        else
-        {
-            // For AI / Opponent
-            card.transform.rotation = Quaternion.Inverse(transform.rotation);
-            card.transform.parent = childCell.transform;
-        }
     }
 
 
@@ -158,6 +124,49 @@ public class BattleBoard : MonoBehaviour
                 healths[i] = GetCardAtCell(oppositeCells[i]).GetComponent<AttackCard>();
         }
         card.GetComponent<IHaveAttack>().Attack(healths);
+    }
+
+    public void CardAtCellMoveTo(Vector2Int cellGridPosition, Vector2Int moveToGridPosition)
+    {
+        ICell cell = gridController.grid[cellGridPosition.y, cellGridPosition.x];
+        if (cell == null) { return; }
+        GameObject card = GetCardAtCell(cell);
+        if (card == null) { return; }
+
+        ICell moveToCell = gridController.grid[moveToGridPosition.y, moveToGridPosition.x];
+        if (moveToCell == null) { return; }
+        GameObject cardAtMoveToCell = GetCardAtCell(moveToCell);
+        if (cardAtMoveToCell == null)
+        {
+            cardMoverOnBoard.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(card, moveToCell.worldPosition + transform.up);
+            cardMoverOnBoard.GetComponent<IMovementTrigger>().Trigger();
+
+            int childIndex = moveToCell.gridPosition.y * gridController.gridSize.x + moveToCell.gridPosition.x;
+            GameObject childCell = transform.GetChild(childIndex).gameObject;
+
+            if (cell.gridPosition.y == 0)
+            {
+                // For player
+                card.transform.rotation = transform.rotation;
+                card.transform.parent = childCell.transform;
+            }
+            else
+            {
+                // For AI / Opponent
+                card.transform.rotation = Quaternion.LookRotation(-transform.forward, transform.up);
+                card.transform.parent = childCell.transform;
+            }
+
+            Debug.Log($"Moved card to {moveToCell.gridPosition}");
+            return; 
+        }
+        else
+        {
+            Debug.Log($"Cant move card to {moveToCell.gridPosition} due to occupied card");
+            return;
+        }
+
+
     }
 
     /*

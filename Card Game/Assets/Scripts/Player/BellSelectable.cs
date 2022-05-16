@@ -5,7 +5,9 @@ using UnityEngine;
 public class BellSelectable : MonoBehaviour, ISelectable
 {
     [SerializeField]
-    private ISelectResponse selectResponse;
+    private GameObject selectResponse;
+    [SerializeField]
+    private BattlePlayer player;
 
     public delegate void BellRinged();
     public static event BellRinged OnBellRinged;
@@ -22,17 +24,20 @@ public class BellSelectable : MonoBehaviour, ISelectable
     public void OnSelect()
     {
         if(selectResponse == null) { return; }
-        selectResponse.OnSelect();
+        selectResponse.GetComponent<ISelectResponse>().OnSelect();
     }
 
     public void OnDeselect()
     {
         if (selectResponse == null) { return; }
-        selectResponse.OnDeselect();
+        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
     }
 
     public void OnClick()
     {
-        RingBell();
+        if(player.selectManager.state == SelectManager.State.CardInHand || player.selectManager.state == SelectManager.State.CardToBoard)
+        {
+            RingBell();
+        }
     }
 }

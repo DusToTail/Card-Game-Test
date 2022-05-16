@@ -22,17 +22,7 @@ public class CircularCurve : MonoBehaviour
         Vector3 tempResult = startPoint.position + startToEnd * Mathf.Clamp01(t);
         Vector3 centerToTemp = tempResult - circleCenter.position;
         result = circleCenter.position + centerToTemp.normalized * radius;
-        Debug.Log($"Start Point {startPoint.position}");
-        Debug.Log($"End Point {endPoint.position}");
-        Debug.Log($"Circle Center Point {circleCenter.position}");
-
-        Debug.Log($"t is {t}");
-
-        Debug.Log($"Center To Start {centerToStart}");
-        Debug.Log($"Start To End {startToEnd}");
-        Debug.Log($"tempResult {tempResult}");
-        Debug.Log($"Result {result}");
-
+        
         return result;
     }
 
@@ -52,13 +42,13 @@ public class CircularCurve : MonoBehaviour
         if (!displayGizmos) { return; }
         if (segments == 0) { return; }
         Gizmos.color = Color.red;
-        Vector3[] vertices = new Vector3[segments];
-        for (int i = 0; i < segments; i++)
+        Vector3[] vertices = new Vector3[segments + 1];
+        for (int i = 0; i < segments + 1; i++)
         {
             vertices[i] = CircularCurveLerp((float)i * 1 / segments);
         }
 
-        for (int i = 0; i < segments - 1; i++)
+        for (int i = 0; i < segments; i++)
         {
             Gizmos.DrawLine(vertices[i], vertices[i + 1]);
         }

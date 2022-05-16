@@ -7,6 +7,8 @@ public class SelectManager
     public ISelectable curSelect;
     public ISelectable prevSelect;
 
+    
+
     public enum State
     {
         DrawFromDeck,
@@ -89,11 +91,11 @@ public class SelectManager
 
     }
 
-    private State _state;
+    public State state { get; private set; }
 
     public SelectManager()
     {
-        _state = State.None;
+        state = State.None;
     }
 
     public void ProcessPassiveSelection()
@@ -124,7 +126,7 @@ public class SelectManager
 
     public void SetSelectState(State state)
     {
-        _state = state;
+        this.state = state;
     }
 
     public ISelectable GetSelectableAtMousePosition()

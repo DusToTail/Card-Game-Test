@@ -11,28 +11,49 @@ public class BattlePlayer : MonoBehaviour
     public SquirrelDeck squirrelDeck;
     public PlayerHand hand;
     public BattleBoard board;
+    public BattleEventController battleController;
     
-    public SelectManager _selectManager { get; private set; }
+    public SelectManager selectManager { get; private set; }
 
-    private void Start()
+    private void OnEnable()
     {
-        _selectManager = new SelectManager();
+        BattleEventController.OnPreparationFinished += AllowSelection;
+    }
+
+    private void OnDisable()
+    {
+        BattleEventController.OnPreparationFinished -= AllowSelection;
+
+    }
+
+    private void Awake()
+    {
+        selectManager = new SelectManager();
         InjectDependency();
     }
 
+    private void Start()
+    {
+        
+    }
 
     private void Update()
     {
         if (!gameObject.activeSelf) { return; }
         // Hover
-        _selectManager.ProcessPassiveSelection();
+        selectManager.ProcessPassiveSelection();
 
         if (Input.GetMouseButtonUp(0))
         {
             // Click
-            _selectManager.ProcessActiveSelection();
+            selectManager.ProcessActiveSelection();
         }
 
+    }
+
+    public void AllowSelection()
+    {
+        selectManager.SetSelectState(SelectManager.State.DrawFromDeck);
     }
 
     public void DrawInitialHand()
@@ -42,6 +63,7 @@ public class BattlePlayer : MonoBehaviour
         {
             DrawOneFromPlayerDeck();
         }
+        selectManager.SetSelectState(SelectManager.State.CardInHand);
     }
 
     public void DrawOneFromPlayerDeck()
@@ -50,6 +72,8 @@ public class BattlePlayer : MonoBehaviour
         Debug.Log("Draw one from player deck");
         GameObject card = playerDeck.cards.Pop();
         hand.AddCardToHand(card);
+        selectManager.SetSelectState(SelectManager.State.CardInHand);
+
     }
 
     public void DrawOneSquirrel()
@@ -58,14 +82,15 @@ public class BattlePlayer : MonoBehaviour
         Debug.Log("Draw one from squirrel deck");
         GameObject card = squirrelDeck.cards.Pop();
         hand.AddCardToHand(card);
+        selectManager.SetSelectState(SelectManager.State.CardInHand);
+
     }
 
     public void InjectDependency()
     {
         playerDeck.battlePlayer = this;
-        squirrelDeck.battlePlayer = this;
+        squirrelDeck.player = this;
         board.InitializeBoard(this);
     }
-
 
 }
