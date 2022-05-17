@@ -44,17 +44,26 @@ public class TwoDimensionGridController : IGridController
         {
             for (int x = 0; x < gridSize.x; x++)
             {
-                GameObject cell = new GameObject($"{x}:{y}");
-                cell.transform.parent = parent;
-                cell.gameObject.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
-                cell.gameObject.tag = Tags.BATTLE_BOARD_CELL_TAG;
-                cell.AddComponent<BoxCollider>();
-                cell.GetComponent<BoxCollider>().size = new Vector3(cellSize.x, 1, cellSize.y);
-                cell.transform.localPosition = Vector3.zero;
-                Vector2Int centerGridPosition = new Vector2Int(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(gridSize.y / 2));
-                Vector2Int dirFromCenter = new Vector2Int(x, y) - centerGridPosition;
-                cell.transform.position += new Vector3(dirFromCenter.x * cellSize.x, 0, dirFromCenter.y * cellSize.y);
-                grid[y, x] = new Cell(new Vector2Int(x,y), cell.transform.position, cellSize);
+                //GameObject cell = new GameObject($"{x}:{y}");
+                //cell.transform.parent = parent;
+                //cell.gameObject.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
+                //cell.gameObject.tag = Tags.BATTLE_BOARD_CELL_TAG;
+                //cell.AddComponent<BoxCollider>();
+                //cell.GetComponent<BoxCollider>().size = new Vector3(cellSize.x, 1, cellSize.y);
+                //cell.transform.localPosition = Vector3.zero;
+                //Vector2Int centerGridPosition = new Vector2Int(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(gridSize.y / 2));
+                //Vector2Int dirFromCenter = new Vector2Int(x, y) - centerGridPosition;
+                //cell.transform.position += new Vector3(dirFromCenter.x * cellSize.x, 1, dirFromCenter.y * cellSize.y);
+                int childIndex = y * gridSize.x + x;
+                
+                grid[y, x] = new Cell(new Vector2Int(x,y), parent.GetChild(childIndex).transform.position, cellSize);
+            }
+        }
+        for (int y = 0; y < gridSize.y; y++)
+        {
+            for (int x = 0; x < gridSize.x; x++)
+            {
+                Debug.Log($"Cell at {grid[y, x].gridPosition} exists");
             }
         }
     }

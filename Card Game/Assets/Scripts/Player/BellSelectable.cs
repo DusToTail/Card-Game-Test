@@ -35,7 +35,7 @@ public class BellSelectable : MonoBehaviour, ISelectable
 
     public void OnClick()
     {
-        if(player.selectManager.state == SelectManager.State.CardInHand || player.selectManager.state == SelectManager.State.CardToBoard)
+        if(player.selectManager.state == SelectManager.State.CardInHand)
         {
             RingBell();
         }

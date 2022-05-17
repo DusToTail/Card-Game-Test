@@ -12,6 +12,8 @@ public class CellSelectable : MonoBehaviour, ISelectable
     public void InitializeCell(ICell cell)
     {
         this.cell = cell;
+        Debug.Log($"Cell {cell.gridPosition} at {cell.worldPosition}");
+        player = GameObject.FindObjectOfType<BattlePlayer>();
     }
 
     public void OnSelect()

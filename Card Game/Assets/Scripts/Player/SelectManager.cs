@@ -118,10 +118,13 @@ public class SelectManager
     public void ProcessActiveSelection()
     {
         curSelect = GetSelectableAtMousePosition();
-        if(curSelect != null)
+        if (curSelect != null)
         {
             curSelect.OnClick();
+            Debug.Log("Current selectable On Click");
         }
+        else
+            Debug.Log("Fail");
     }
 
     public void SetSelectState(State state)
@@ -136,7 +139,6 @@ public class SelectManager
         Physics.Raycast(ray, out hit, 1000, LayerMask.GetMask(Tags.SELECTABLE_LAYER), QueryTriggerInteraction.Ignore);
         if (hit.collider != null)
         {
-            //Debug.Log(hit.collider.gameObject.name);
             return hit.collider.gameObject.GetComponent<ISelectable>();
         }
         return null;

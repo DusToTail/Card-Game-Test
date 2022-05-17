@@ -28,6 +28,7 @@ public class CircularMovement : MonoBehaviour, IMovementTrigger
         t += Time.deltaTime * speed;
         if (t >= 1)
         {
+            MoveInCircularCurve(moveObject, t);
             movementFinished = true;
             moveObject = null;
             if(nextMovementTrigger != null)

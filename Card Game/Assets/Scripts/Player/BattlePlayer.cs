@@ -47,6 +47,7 @@ public class BattlePlayer : MonoBehaviour
         {
             // Click
             selectManager.ProcessActiveSelection();
+            Debug.Log("Left mouse clicked");
         }
 
     }
@@ -90,7 +91,6 @@ public class BattlePlayer : MonoBehaviour
     {
         playerDeck.battlePlayer = this;
         squirrelDeck.player = this;
-        board.InitializeBoard(this);
     }
 
 }

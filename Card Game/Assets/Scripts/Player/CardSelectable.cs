@@ -63,7 +63,7 @@ public class CardSelectable : MonoBehaviour, ISelectable
 
     public void PlayCardOnBoard(ICell cell)
     {
-        if (cell == null) { return; }
+        if (cell == null) { Debug.Log("Cell is null"); return; }
         if (board.GetCardAtCell(cell) != null) { return; }
 
         

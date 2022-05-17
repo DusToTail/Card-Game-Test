@@ -12,14 +12,20 @@ public class BattleBoard : MonoBehaviour
     [SerializeField]
     private CardScriptableObject cardSetting;
     [SerializeField]
-    private GameObject cardMoverOnBoard;
+    private GameObject allyMoversOnBoard;
+    [SerializeField]
+    private GameObject enemyMoversOnBoard;
 
     [SerializeField]
     private bool displayGizmos;
 
     private void Awake()
     {
-
+        gridController = new TwoDimensionGridController(transform, boardSetting.gridSize, boardSetting.cellSize);
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            transform.GetChild(i).GetComponent<CellSelectable>().InitializeCell(gridController.grid[i / gridController.gridSize.x, i % gridController.gridSize.x]);
+        }
     }
 
     private void Start()
@@ -31,7 +37,6 @@ public class BattleBoard : MonoBehaviour
     public void InitializeBoard(BattlePlayer player)
     {
         boardSetting.cellSize = new Vector2(transform.lossyScale.x / boardSetting.gridSize.x, transform.lossyScale.z / boardSetting.gridSize.y);
-        gridController = new TwoDimensionGridController(transform, boardSetting.gridSize, boardSetting.cellSize);
 
         // Clear Childs
         int count = transform.childCount;
@@ -58,15 +63,19 @@ public class BattleBoard : MonoBehaviour
                 cell.gameObject.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
                 cell.gameObject.tag = Tags.BATTLE_BOARD_CELL_TAG;
                 cell.AddComponent<BoxCollider>();
-                cell.AddComponent<CellSelectable>();
-                cell.GetComponent<CellSelectable>().InitializeCell(gridController.grid[y, x]);
-                cell.GetComponent<CellSelectable>().player = player;
-                cell.GetComponent<BoxCollider>().size = new Vector3(boardSetting.cellSize.x, 1, boardSetting.cellSize.y);
+                cell.GetComponent<BoxCollider>().size = new Vector3(boardSetting.cellSize.x, 0.1f, boardSetting.cellSize.y);
                 cell.transform.localPosition = Vector3.zero;
                 Vector2Int centerGridPosition = new Vector2Int(Mathf.FloorToInt(boardSetting.gridSize.x / 2), Mathf.FloorToInt(boardSetting.gridSize.y / 2));
                 Vector2Int dirFromCenter = new Vector2Int(x, y) - centerGridPosition;
-                cell.transform.position += new Vector3(dirFromCenter.x * boardSetting.cellSize.x, 0, dirFromCenter.y * boardSetting.cellSize.y);
+                cell.transform.position += new Vector3(dirFromCenter.x * boardSetting.cellSize.x, 0.5f, dirFromCenter.y * boardSetting.cellSize.y);
+                Debug.Log($"Cell {x}:{y} exist in {cell.transform.parent.name} and added selectable");
             }
+        }
+
+        for (int i = count - 1; i >= 0; i--)
+        {
+            transform.GetChild(i).gameObject.AddComponent<CellSelectable>();
+            transform.GetChild(i).GetComponent<CellSelectable>().InitializeCell(gridController.grid[i / gridController.gridSize.x, i % gridController.gridSize.x]);
         }
 
     }
@@ -138,22 +147,21 @@ public class BattleBoard : MonoBehaviour
         GameObject cardAtMoveToCell = GetCardAtCell(moveToCell);
         if (cardAtMoveToCell == null)
         {
-            cardMoverOnBoard.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(card, moveToCell.worldPosition + transform.up);
-            cardMoverOnBoard.GetComponent<IMovementTrigger>().Trigger();
-
             int childIndex = moveToCell.gridPosition.y * gridController.gridSize.x + moveToCell.gridPosition.x;
             GameObject childCell = transform.GetChild(childIndex).gameObject;
 
             if (cell.gridPosition.y == 0)
             {
                 // For player
-                card.transform.rotation = transform.rotation;
+                allyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(card, moveToCell.worldPosition + transform.up);
+                allyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().Trigger();
                 card.transform.parent = childCell.transform;
             }
             else
             {
                 // For AI / Opponent
-                card.transform.rotation = Quaternion.LookRotation(-transform.forward, transform.up);
+                enemyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(card, moveToCell.worldPosition + transform.up);
+                enemyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().Trigger();
                 card.transform.parent = childCell.transform;
             }
 

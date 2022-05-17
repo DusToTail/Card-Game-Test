@@ -26,6 +26,7 @@ public class OneWayBezierMovement : MonoBehaviour, IMovementTrigger
         t += Time.deltaTime * speed;
         if(t >= 1)
         {
+            MoveInBezierCurve(moveObject, t);
             movementFinished = true;
             moveObject = null;
             if (nextMovementTrigger != null)

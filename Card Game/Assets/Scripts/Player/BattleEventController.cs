@@ -61,7 +61,7 @@ public class BattleEventController : MonoBehaviour
             ICell cell = player.board.gridController.grid[0, index];
 
             player.board.CardAtCellCommitAttack(cell.gridPosition);
-
+            // Wait for the card at index to finish before moving on
         }
         // Trigger battle and abilities for each card as below:
         // Before attack of the card (ability?)
@@ -89,6 +89,7 @@ public class BattleEventController : MonoBehaviour
 
             player.board.CardAtCellCommitAttack(frontCell.gridPosition);
 
+            // Wait for the card at index to finish before moving on
         }
         // Trigger battle and abilities for each card as below:
         // Before attack of the card (ability?)
