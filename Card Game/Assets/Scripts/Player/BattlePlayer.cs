@@ -47,7 +47,6 @@ public class BattlePlayer : MonoBehaviour
         {
             // Click
             selectManager.ProcessActiveSelection();
-            Debug.Log("Left mouse clicked");
         }
 
     }

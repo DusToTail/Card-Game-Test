@@ -132,6 +132,17 @@ public class BattleBoard : MonoBehaviour
             else
                 healths[i] = GetCardAtCell(oppositeCells[i]).GetComponent<AttackCard>();
         }
+
+        // Trigger animation for attacking
+        if(healths[0] == null)
+        {
+            // Direck Attack
+        }
+        else
+        {
+            // Attack opposite card(s)
+        }
+
         card.GetComponent<IHaveAttack>().Attack(healths);
     }
 

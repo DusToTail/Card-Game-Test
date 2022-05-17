@@ -24,12 +24,12 @@ public class BattleEventController : MonoBehaviour
 
     private void OnEnable()
     {
-        BellSelectable.OnBellRinged += PlayerBattlePhase;
+        BellSelectable.OnBellRinged += StartPlayerBattlePhaseCoroutine;
     }
 
     private void OnDisable()
     {
-        BellSelectable.OnBellRinged -= PlayerBattlePhase;
+        BellSelectable.OnBellRinged -= StartPlayerBattlePhaseCoroutine;
     }
 
     private void Start()
@@ -49,7 +49,12 @@ public class BattleEventController : MonoBehaviour
         OnPreparationFinished();
     }
 
-    public void PlayerBattlePhase()
+    public void StartPlayerBattlePhaseCoroutine()
+    {
+        StartCoroutine(PlayerBattlePhaseCoroutine());
+    }
+
+    public IEnumerator PlayerBattlePhaseCoroutine()
     {
         // TRIGGER BATTLE PHASE EVENT (bell)
 
@@ -61,7 +66,9 @@ public class BattleEventController : MonoBehaviour
             ICell cell = player.board.gridController.grid[0, index];
 
             player.board.CardAtCellCommitAttack(cell.gridPosition);
-            // Wait for the card at index to finish before moving on
+
+            TwoDimensionGridController.HighlightCellForSeconds(cell, 0.5f);
+            yield return new WaitForSeconds(0.5f);
         }
         // Trigger battle and abilities for each card as below:
         // Before attack of the card (ability?)
@@ -73,10 +80,15 @@ public class BattleEventController : MonoBehaviour
         player.selectManager.SetSelectState(SelectManager.State.None);
         Debug.Log($"End Player's Turn");
 
-        EnemyBattlePhase();
+        StartEnemyBattlePhaseCoroutine();
     }
 
-    public void EnemyBattlePhase()
+    public void StartEnemyBattlePhaseCoroutine()
+    {
+        StartCoroutine(EnemyBattlePhaseCoroutine());
+    }
+
+    public IEnumerator EnemyBattlePhaseCoroutine()
     {
         // Attack
         for (int index = 0; index < player.board.gridController.gridSize.x; index++)
@@ -84,12 +96,15 @@ public class BattleEventController : MonoBehaviour
             ICell backCell = player.board.gridController.grid[2, index];
 
             ICell frontCell = player.board.gridController.grid[1, index];
-
+            
             player.board.CardAtCellMoveTo(backCell.gridPosition, frontCell.gridPosition);
+            TwoDimensionGridController.HighlightCellForSeconds(backCell, 0.5f);
+            yield return new WaitForSeconds(0.5f);
 
             player.board.CardAtCellCommitAttack(frontCell.gridPosition);
 
-            // Wait for the card at index to finish before moving on
+            TwoDimensionGridController.HighlightCellForSeconds(frontCell, 0.5f);
+            yield return new WaitForSeconds(0.5f);
         }
         // Trigger battle and abilities for each card as below:
         // Before attack of the card (ability?)

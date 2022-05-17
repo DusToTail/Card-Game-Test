@@ -67,4 +67,20 @@ public class TwoDimensionGridController : IGridController
             }
         }
     }
+
+    public static void HighlightCellForSeconds(ICell cell, float timeInSeconds)
+    {
+        Vector3[] vertices = new Vector3[4];
+        vertices[0] = cell.worldPosition + new Vector3(-cell.cellSize.x / 2, 0, -cell.cellSize.y / 2);
+        vertices[1] = cell.worldPosition + new Vector3(cell.cellSize.x / 2, 0, -cell.cellSize.y / 2);
+        vertices[2] = cell.worldPosition + new Vector3(cell.cellSize.x / 2, 0, cell.cellSize.y / 2);
+        vertices[3] = cell.worldPosition + new Vector3(-cell.cellSize.x / 2, 0, cell.cellSize.y / 2);
+        for(int i = 0; i < vertices.Length; i++)
+        {
+            if (i == vertices.Length - 1)
+                Debug.DrawLine(vertices[i], vertices[0], Color.red, timeInSeconds);
+            else
+                Debug.DrawLine(vertices[i], vertices[i + 1], Color.red, timeInSeconds);
+        }
+    }
 }

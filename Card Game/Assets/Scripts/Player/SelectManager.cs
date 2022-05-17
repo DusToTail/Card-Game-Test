@@ -121,10 +121,7 @@ public class SelectManager
         if (curSelect != null)
         {
             curSelect.OnClick();
-            Debug.Log("Current selectable On Click");
         }
-        else
-            Debug.Log("Fail");
     }
 
     public void SetSelectState(State state)
