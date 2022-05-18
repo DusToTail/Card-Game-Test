@@ -59,13 +59,13 @@ public class TwoDimensionGridController : IGridController
                 grid[y, x] = new Cell(new Vector2Int(x,y), parent.GetChild(childIndex).transform.position, cellSize);
             }
         }
-        for (int y = 0; y < gridSize.y; y++)
-        {
-            for (int x = 0; x < gridSize.x; x++)
-            {
-                Debug.Log($"Cell at {grid[y, x].gridPosition} exists");
-            }
-        }
+        //for (int y = 0; y < gridSize.y; y++)
+        //{
+        //    for (int x = 0; x < gridSize.x; x++)
+        //    {
+        //        Debug.Log($"Cell at {grid[y, x].gridPosition} exists");
+        //    }
+        //}
     }
 
     public static void HighlightCellForSeconds(ICell cell, float timeInSeconds)

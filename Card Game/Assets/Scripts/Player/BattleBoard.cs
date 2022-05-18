@@ -174,7 +174,7 @@ public class BattleBoard : MonoBehaviour
             attackTrigger.Trigger();
         }
 
-        
+        // Wait until the animation of attacking is finished
 
         card.GetComponent<IHaveAttack>().Attack(healths);
     }
@@ -221,49 +221,7 @@ public class BattleBoard : MonoBehaviour
 
     }
 
-    /*
-
-    public void PlayBattlePhaseOfPlayer()
-    {
-        for(int index = 0; index < boardSetting.gridSize.x; index++)
-        {
-            if(grid[_curPlayerIndex, index] == null) { continue; }
-            if(grid[_curPlayerIndex, index].card == null) { continue; }
-            CardAtCellCommitAttack(new Vector2Int(index, _curPlayerIndex));
-        }
-        SwitchPlayerIndex();
-    }
-
-    private void CardAtCellCommitAttack(Vector2Int _cellPosition)
-    {
-        if(grid[_cellPosition.y, _cellPosition.x].card == null) { return; }
-
-        grid[_cellPosition.y, _cellPosition.x].card.Attack(GetOppositeCells(grid[_cellPosition.y, _cellPosition.x]));
-        Debug.DrawLine(grid[_cellPosition.y, _cellPosition.x].worldPosition, grid[_cellPosition.y, _cellPosition.x].worldPosition + Vector3.up, Color.green, 10);
-        foreach(var cell in GetOppositeCells(grid[_cellPosition.y, _cellPosition.x]))
-        {
-            Debug.DrawLine(cell.worldPosition, cell.worldPosition + Vector3.up, Color.red, 10);
-        }
-    }
-
-    private Cell[] GetOppositeCells(Cell _cell)
-    {
-        if(_cell.gridPosition.y == 0) 
-        { 
-            return new Cell[2]{ grid[1, _cell.gridPosition.y], grid[2, _cell.gridPosition.y] }; 
-        }
-        else 
-        { 
-            return new Cell[1] { grid[0, _cell.gridPosition.y] }; 
-        }
-    }
-
-    private void SwitchPlayerIndex()
-    {
-        if (_curPlayerIndex == 0) { _curPlayerIndex = 1; }
-        else { _curPlayerIndex = 0; }
-    }
-    */
+    
     private void OnDrawGizmos()
     {
         if (!displayGizmos) { return; }

@@ -24,13 +24,14 @@ public class BellSelectable : MonoBehaviour, ISelectable
     public void OnSelect()
     {
         if(selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        if (player.selectManager.state == SelectManager.State.CardInHand)
+            selectResponse.GetComponent<ISelectResponse>().OnSelect();
     }
 
     public void OnDeselect()
     {
         if (selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
+            selectResponse.GetComponent<ISelectResponse>().OnDeselect();
     }
 
     public void OnClick()

@@ -9,16 +9,16 @@ public class BattleEventController : MonoBehaviour
     public delegate void PreparationFinished();
     public static event PreparationFinished OnPreparationFinished;
 
-    public delegate void PlayerTurnStarted();
-    public static event PlayerTurnStarted OnPlayerTurnStarted;
-    public delegate void CardDrawn();
-    public static event CardDrawn OnCardDrawn;
-    public delegate void CardAddedToHand();
-    public static event CardAddedToHand OnCardAddedToHand;
-    public delegate void CardPicked();
-    public static event CardPicked OnCardPicked;
-    public delegate void CardPlayedToBoard();
-    public static event CardPlayedToBoard OnCardPlayedToBoard;
+    //public delegate void PlayerTurnStarted();
+    //public static event PlayerTurnStarted OnPlayerTurnStarted;
+    //public delegate void CardDrawn();
+    //public static event CardDrawn OnCardDrawn;
+    //public delegate void CardAddedToHand();
+    //public static event CardAddedToHand OnCardAddedToHand;
+    //public delegate void CardPicked();
+    //public static event CardPicked OnCardPicked;
+    //public delegate void CardPlayedToBoard();
+    //public static event CardPlayedToBoard OnCardPlayedToBoard;
 
 
 
@@ -51,13 +51,13 @@ public class BattleEventController : MonoBehaviour
 
     public void StartPlayerBattlePhaseCoroutine()
     {
+        // TRIGGER BATTLE PHASE EVENT (bell)
+
         StartCoroutine(PlayerBattlePhaseCoroutine());
     }
 
     public IEnumerator PlayerBattlePhaseCoroutine()
     {
-        // TRIGGER BATTLE PHASE EVENT (bell)
-
         player.selectManager.SetSelectState(SelectManager.State.Battle);
 
         // Attack
