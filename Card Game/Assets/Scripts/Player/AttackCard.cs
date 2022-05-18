@@ -21,7 +21,15 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     private GameObject deathResponse;
     [SerializeField]
     private CardScriptableObject cardScriptableObject;
-    
+
+    [Header("Text")]
+    [SerializeField]
+    private TMPro.TextMeshPro nameTextMesh;
+    [SerializeField]
+    private TMPro.TextMeshPro healthTextMesh;
+    [SerializeField]
+    private TMPro.TextMeshPro powerTextMesh;
+
 
     private int _curHealth;
     private int _curAttackDamage;
@@ -43,6 +51,7 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     private void Start()
     {
         _isPlayed = false;
+        InitializeStats();
 
     }
 
@@ -114,12 +123,32 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
         _curAttackDamage = initialAttackDamage;
         _actualAttackDamage = _curAttackDamage;
         _curSacrificeCount = 0;
+
+        nameTextMesh.text = cardName;
+        healthTextMesh.text = _curHealth.ToString();
+        powerTextMesh.text = _actualAttackDamage.ToString();
+    }
+
+    public void UpdateStatsText(bool duringBattle)
+    {
+        if(duringBattle)
+        {
+            healthTextMesh.text = _curHealth.ToString();
+            powerTextMesh.text = _actualAttackDamage.ToString();
+        }
+        else
+        {
+            healthTextMesh.text = initialHealth.ToString();
+            powerTextMesh.text = initialAttackDamage.ToString();
+        }
+        
     }
 
     public void PlusInitialHealth(int amount)
     {
         if(amount <= 0) { return; }
         initialHealth += amount;
+        UpdateStatsText(false);
     }
 
     public void MinusInitialHealth(int amount)
@@ -127,12 +156,14 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
         if (amount <= 0) { return; }
         initialHealth -= amount;
         if(initialHealth < 0) { initialHealth = 0; }
+        UpdateStatsText(false);
     }
 
     public void PlusCurrentHealth(int amount)
     {
         if (amount <= 0) { return; }
         _curHealth += amount;
+        UpdateStatsText(true);
     }
 
     public void MinusCurrentHealth(int amount)
@@ -140,6 +171,7 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
         if (amount <= 0) { return; }
         _curHealth -= amount;
         if (_curHealth < 0) { _curHealth = 0; }
+        UpdateStatsText(true);
     }
 
     public int GetCurrentHealth()

@@ -158,6 +158,9 @@ MonoBehaviour:
   sacrificeNum: 2
   deathResponse: {fileID: 2696344111912272136}
   cardScriptableObject: {fileID: 11400000, guid: 8bf53f3c7fb5e454b98c4f8f4b1a91de, type: 2}
+  nameTextMesh: {fileID: 8944457348027282858}
+  healthTextMesh: {fileID: 6317057236064128802}
+  powerTextMesh: {fileID: 6367225839369657272}
 --- !u!114 &2154825587093701270
 MonoBehaviour:
   m_ObjectHideFlags: 0
