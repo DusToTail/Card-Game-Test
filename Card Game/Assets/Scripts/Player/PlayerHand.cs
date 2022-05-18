@@ -13,6 +13,8 @@ public class PlayerHand : MonoBehaviour
     private GameObject toHandMovementTrigger;
     [SerializeField]
     private GameObject inHandMovementTriggers;
+    [SerializeField]
+    private GameObject inHandCardSelectResponseMovers;
 
     [SerializeField]
     private Transform spreadCircleCenterPosition;
@@ -67,6 +69,8 @@ public class PlayerHand : MonoBehaviour
             {
                 GameObject newTrigger = Instantiate(inHandMovementTriggers.transform.GetChild(0).gameObject, inHandMovementTriggers.transform);
                 newTrigger.name = inHandMovementTriggers.transform.GetChild(0).name;
+                GameObject newCardSelectResponse = Instantiate(inHandCardSelectResponseMovers.transform.GetChild(0).gameObject, inHandCardSelectResponseMovers.transform);
+                newCardSelectResponse.name = inHandCardSelectResponseMovers.transform.GetChild(0).name;
             }
 
             if (i < cards.Count - 1)
@@ -82,8 +86,11 @@ public class PlayerHand : MonoBehaviour
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().nextMovementTrigger = inHandMovementTriggers.transform.GetChild(i).gameObject;
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
-
             }
+
+            // May need refactor later on
+            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().moveObject = cards[i];
+            cards[i].GetComponent<CardSelectable>().SetSelectResponse(inHandCardSelectResponseMovers.transform.GetChild(i).gameObject);
             
         }
     }

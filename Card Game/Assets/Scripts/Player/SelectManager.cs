@@ -106,12 +106,17 @@ public class SelectManager
         {
             if(curSelect != prevSelect)
             {
-                curSelect.OnSelect();
+                curSelect.OnSelect();   
                 if(prevSelect != null)
                 {
                     prevSelect.OnDeselect();
                 }
             }
+        }
+        else
+        {
+            if(prevSelect != null)
+                prevSelect.OnDeselect();
         }
     }
 

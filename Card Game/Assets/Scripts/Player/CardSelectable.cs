@@ -22,13 +22,17 @@ public class CardSelectable : MonoBehaviour, ISelectable
     public void OnSelect()
     {
         if(selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        if(player.selectManager.state == SelectManager.State.CardInHand)
+        {
+            selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        }
     }
 
     public void OnDeselect()
     {
         if (selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
+        if (player.selectManager.state == SelectManager.State.CardInHand)
+            selectResponse.GetComponent<ISelectResponse>().OnDeselect();
     }
 
     public void OnClick()
@@ -117,6 +121,11 @@ public class CardSelectable : MonoBehaviour, ISelectable
 
         Debug.Log("Card returned to hand");
 
+    }
+
+    public void SetSelectResponse(GameObject selectResponse)
+    {
+        this.selectResponse = selectResponse;
     }
 
 }
