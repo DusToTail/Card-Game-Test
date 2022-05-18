@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class for handling the creation of the player deck. Draw the top card if clicked
+/// 日本語：プレイヤーのデッキを管理するクラス。クリックすると、トップにあるカード返す
+/// </summary>
 public class PlayerDeck : MonoBehaviour, ISelectable
 {
     public Stack<GameObject> cards = new Stack<GameObject>();
@@ -23,6 +27,10 @@ public class PlayerDeck : MonoBehaviour, ISelectable
         
     }
 
+    /// <summary>
+    /// English: Clear the deck before creating a new one
+    /// 日本語：新なデッキを作る前にデッキをクリアする
+    /// </summary>
     public void ClearDeck()
     {
         int count = transform.childCount;
@@ -42,9 +50,15 @@ public class PlayerDeck : MonoBehaviour, ISelectable
         _curHeight = 0;
     }
 
+    /// <summary>
+    /// *** MAY NEED REIMPLEMENTATION ***
+    /// English: Create a deck from the persistent deck game object with each card stacking on top of each other, and then shuffle it
+    /// 日本語：固定のデッキからプレイヤーのデッキを作り、シャッフルする。
+    /// </summary>
+    /// <param name="deck"></param>
     public void BuildDeck(GameObject deck)
     {
-        // Skip 0 because squirrel
+        // Skip 0 because squirrel is at index 0 in the persistent deck (deck to be copied from)
         for (int i = 1; i < deck.transform.childCount; i++)
         {
             GameObject newCard = Instantiate(deck.transform.GetChild(i).gameObject);
@@ -55,8 +69,13 @@ public class PlayerDeck : MonoBehaviour, ISelectable
             cards.Push(newCard);
             _curHeight++;
         }
+        ShuffleDeck();
     }
 
+    /// <summary>
+    /// English: Shuffle the deck in random position
+    /// 日本語：ランダムにシャッフルする
+    /// </summary>
     public void ShuffleDeck()
     {
         GameObject[] newDeck = new GameObject[cards.Count];
@@ -80,7 +99,7 @@ public class PlayerDeck : MonoBehaviour, ISelectable
             {
                 newDeck[i].transform.parent = transform;
                 newDeck[i].transform.position = transform.position + Vector3.up * 0.1f * currentHeight;
-                newDeck[i].transform.rotation = transform.rotation;
+                newDeck[i].transform.rotation = Quaternion.LookRotation(-transform.forward, -transform.up);
 
                 cards.Push(newDeck[i]);
                 currentHeight++;
@@ -89,6 +108,11 @@ public class PlayerDeck : MonoBehaviour, ISelectable
         }
     }
 
+    /// <summary>
+    /// English: Return a list of card names from the deck
+    /// 日本語：デッキからカードの名前の配列を返す
+    /// </summary>
+    /// <returns></returns>
     public string[] GetDeckContents()
     {
         string[] contents = new string[transform.childCount];

@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class that processes selection for cells
+/// 日本語：セル用の選択を処理するクラス
+/// </summary>
 public class CellSelectable : MonoBehaviour, ISelectable
 {
     public ICell cell { get; private set; }

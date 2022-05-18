@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// *** MAY MAKE INTO ONE STATIC HELPER CLASS ***
+/// English: Class that holds a bezier curve and handles lerp operation. Support Cubic, Quadratic, Linear
+/// 日本語：Bezierカーブを持ち、Lerpを処理するクラス
+/// </summary>
 public class BezierCurve : MonoBehaviour
 {
     public Transform[] controlPoints;
@@ -10,6 +15,11 @@ public class BezierCurve : MonoBehaviour
     [SerializeField]
     private bool displayGizmos;
 
+    /// <summary>
+    /// English: Cubic Lerp position calculated from start point to end point.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Vector3 CubicBezierCurveLerp(float t)
     {
         Vector3 result = Vector3.zero;
@@ -25,6 +35,11 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// English: Quadratic Lerp position calculated from start point to end point.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Vector3 QuadraticBezierCurveLerp(float t)
     {
         Vector3 result = Vector3.zero;
@@ -39,6 +54,11 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// English: Linear Lerp position calculated from start point to end point.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Vector3 LinearBezierCurveLerp(float t)
     {
         Vector3 result = Vector3.zero;
@@ -52,7 +72,11 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
-
+    /// <summary>
+    /// English: Cubic Lerp rotation calculated from start point to end point.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Quaternion GetCubicBezierCurveRotation(float t)
     {
         Quaternion result = new Quaternion();
@@ -70,6 +94,11 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// English: Quadratic Lerp rotation calculated from start point to end point.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Quaternion GetQuadraticBezierCurveRotation(float t)
     {
         Quaternion result = new Quaternion();
@@ -83,6 +112,11 @@ public class BezierCurve : MonoBehaviour
         return result;
     }
 
+    /// <summary>
+    /// English: Linear Lerp rotation calculated from start point to end point.
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Quaternion GetLinearBezierCurveRotation(float t)
     {
         Quaternion result = new Quaternion();

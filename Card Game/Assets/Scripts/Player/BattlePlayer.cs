@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class that centralize the battle systems and handles player's input
+/// 日本語：バトルシステムを統括し、プレイヤーのインプットを処理するクラス
+/// </summary>
 public class BattlePlayer : MonoBehaviour
 {
     public string playerName;
@@ -51,11 +55,21 @@ public class BattlePlayer : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// *** MAY NEED REIMPLEMENTATION or RENAME ***
+    /// English: Allow draw from deck
+    /// 日本語：デッキからドローすることを可能にする
+    /// </summary>
     public void AllowSelection()
     {
         selectManager.SetSelectState(SelectManager.State.DrawFromDeck);
     }
 
+    /// <summary>
+    /// *** NEED REIMPLEMENTATION (due to positions of cards getting constantly overwritten as start position for movers before reaching the destination)
+    /// English: Draw the intial hand when the battle starts
+    /// 日本語：バトル開始に初めの手をドローする
+    /// </summary>
     public void DrawInitialHand()
     {
         DrawOneSquirrel();
@@ -66,6 +80,10 @@ public class BattlePlayer : MonoBehaviour
         selectManager.SetSelectState(SelectManager.State.CardInHand);
     }
 
+    /// <summary>
+    /// English: Draw one card from player deck
+    /// 日本語：プレイヤーデッキから一枚を引く
+    /// </summary>
     public void DrawOneFromPlayerDeck()
     {
         if (playerDeck.cards.Count == 0) { return; }
@@ -76,6 +94,10 @@ public class BattlePlayer : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// English: Draw one card from squirrel deck
+    /// 日本語：リスデッキから一枚を引く
+    /// </summary>
     public void DrawOneSquirrel()
     {
         if (squirrelDeck.cards.Count == 0) { return; }

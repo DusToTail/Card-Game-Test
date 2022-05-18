@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// *** MAY MAKE INTO ONE STATIC HELPER CLASS ***
+/// English: Mover class that handles two way bezier curve movement. Support Cubic, Quadratic, Linear
+/// 日本語：双方向のBezierカーブの動きを処理するMoverクラス
+/// </summary>
 public class TwoWayBezierMovement : MonoBehaviour, IMovementTrigger
 {
     public GameObject nextMovementTrigger { get; set; }

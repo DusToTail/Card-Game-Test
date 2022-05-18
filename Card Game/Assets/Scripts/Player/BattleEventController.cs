@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class for handling the flow in each battle from the start of player turn to the end of enemy turn (a full cycle)
+/// 日本語：バトル中のプレイヤーのターンから相手のターンまで（一つのサイクル）の流れを処理するクラス
+/// </summary>
 public class BattleEventController : MonoBehaviour
 {
     public BattlePlayer player;
@@ -49,48 +53,70 @@ public class BattleEventController : MonoBehaviour
         OnPreparationFinished();
     }
 
+    /// <summary>
+    /// English: Start the coroutine that handles the battle phase of the player after the bell
+    /// 日本語：ベルの鳴らしの後のプレイヤーのバトルフェースのコルーチンを開始する
+    /// </summary>
     public void StartPlayerBattlePhaseCoroutine()
     {
-        // TRIGGER BATTLE PHASE EVENT (bell)
-
         StartCoroutine(PlayerBattlePhaseCoroutine());
     }
 
+    /// <summary>
+    /// English: Coroutine that handles the actions of the cards from left to right on the player's field
+    /// 日本語：左から右までプレイヤー陣のカードの行動をさせるコルーチン
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator PlayerBattlePhaseCoroutine()
     {
+        // Prohibit player from selecting / making actions when cards are battling
         player.selectManager.SetSelectState(SelectManager.State.Battle);
 
-        // Attack
         for (int index = 0; index < player.board.gridController.gridSize.x; index++)
         {
             ICell cell = player.board.gridController.grid[0, index];
 
             player.board.CardAtCellCommitAttack(cell.gridPosition);
 
+            // *** TO BE IMPLEMENTED ***
+            // Trigger battle and abilities for each card as below:
+            // Before attack of the card (ability?)
+            // Attack of the card (health - damage calculation)
+            // Opposite card damaged (ability?)
+            // Opposite card death (trigger death animation + ability?)
+
+            // Highlight in Scene View
             TwoDimensionGridController.HighlightCellForSeconds(cell, 0.5f);
+
+            // *** TO BE REIMPLEMENTED ***
             yield return new WaitForSeconds(0.5f);
         }
-        // Trigger battle and abilities for each card as below:
-        // Before attack of the card (ability?)
-        // Attack of the card (health - damage calculation)
-        // Opposite card damaged (ability?)
-        // Opposite card death (trigger death animation + ability?)
-        // Repeat
-
+        
+        // Prohibit player from selecting / making actions during enemy's turn
         player.selectManager.SetSelectState(SelectManager.State.None);
         Debug.Log($"End Player's Turn");
 
+        // Start enemy battle phase
         StartEnemyBattlePhaseCoroutine();
     }
 
+    /// <summary>
+    /// English: Start the coroutine that handles the battle phase of the opponent after the bell
+    /// 日本語：ベルの鳴らしの後の相手のバトルフェースのコルーチンを開始する
+    /// </summary>
     public void StartEnemyBattlePhaseCoroutine()
     {
         StartCoroutine(EnemyBattlePhaseCoroutine());
     }
 
+
+    /// <summary>
+    /// English: Coroutine that handles the actions of the cards from left to right on the opponent's field
+    /// 日本語：左から右まで相手陣のカードの行動をさせるコルーチン
+    /// </summary>
+    /// <returns></returns>
     public IEnumerator EnemyBattlePhaseCoroutine()
     {
-        // Attack
         for (int index = 0; index < player.board.gridController.gridSize.x; index++)
         {
             ICell backCell = player.board.gridController.grid[2, index];
@@ -99,55 +125,47 @@ public class BattleEventController : MonoBehaviour
             
             player.board.CardAtCellMoveTo(backCell.gridPosition, frontCell.gridPosition);
             TwoDimensionGridController.HighlightCellForSeconds(backCell, 0.5f);
+
+            // *** TO BE REIMPLEMENTED ***
             yield return new WaitForSeconds(0.5f);
 
             player.board.CardAtCellCommitAttack(frontCell.gridPosition);
 
+            // *** TO BE IMPLEMENTED ***
+            // Trigger battle and abilities for each card as below:
+            // Before attack of the card (ability?)
+            // Attack of the card (health - damage calculation)
+            // Opposite card damaged (ability?)
+            // Opposite card death (trigger death animation + ability?)
+
+            // Highlight in Scene View
             TwoDimensionGridController.HighlightCellForSeconds(frontCell, 0.5f);
+
+            // *** TO BE REIMPLEMENTED ***
             yield return new WaitForSeconds(0.5f);
         }
-        // Trigger battle and abilities for each card as below:
-        // Before attack of the card (ability?)
-        // Attack of the card (health - damage calculation)
-        // Opposite card damaged (ability?)
-        // Opposite card death (trigger death animation + ability?)
-        // Repeat
-
+        
+        // Start of the next round, allowing player to draw a card from deck and making other simple movement
         player.selectManager.SetSelectState(SelectManager.State.DrawFromDeck);
         Debug.Log($"End Enemy's Turn");
     }
 
-
-
+    // NOT USED YET
+    /*
     public void StartDrawPhase()
     {
-        // TRIGGER DRAW PHASE EVENT (turn controller, after the enemy turn finished attacking)
         player.selectManager.SetSelectState(SelectManager.State.DrawFromDeck);
-        // Draw cards for current player
-
-        // Stop and wait for current player to draw a card
     }
-
     public void EndDrawPhase()
     {
         player.selectManager.SetSelectState(SelectManager.State.CardInHand);
-
     }
-
     public void PreparePhase()
     {
-        // TRIGGER PREPARE PHASE EVENT (after Draw Phase
-
-        // Stop and wait for current player to ring the bell
     }
-
-    
     public void EndPhase()
     {
-        // TRIGGER END PHASE EVENT (right after end phase)
-
-        // Trigger abilities for each card (if applicable):
     }
-    
+    */
 
 }

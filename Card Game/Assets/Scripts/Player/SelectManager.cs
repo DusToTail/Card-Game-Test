@@ -2,13 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class that handles passive (mouse hover) and active (mouse click) selection
+/// 日本語：パッシブ（マウスオーバー）とアクティブ（マウスクリック）選択を処理するクラス
+/// </summary>
 public class SelectManager
 {
     public ISelectable curSelect;
     public ISelectable prevSelect;
 
-    
-
+    /// <summary>
+    /// English: Different states that allow player to select different objects
+    /// 日本語：特定のオブジェクトのみを選べることにする複数の状態
+    /// </summary>
     public enum State
     {
         DrawFromDeck,
@@ -93,11 +99,19 @@ public class SelectManager
 
     public State state { get; private set; }
 
+    /// <summary>
+    /// English: Default constructor. State to None
+    /// 日本語：デフォルトコンストラクタ。状態は None
+    /// </summary>
     public SelectManager()
     {
         state = State.None;
     }
 
+    /// <summary>
+    /// English: Process passive selection when hovering mouse. OnSelect() for new selection. OnDeselect() for previous selection
+    /// 日本語：パッシブ選択（マウスオーバー）を処理する。新たに選択されたオブジェクトをOnSelect()させ、前に選択されたオブジェクトをOnDeselect()させる
+    /// </summary>
     public void ProcessPassiveSelection()
     {
         prevSelect = curSelect;
@@ -120,6 +134,10 @@ public class SelectManager
         }
     }
 
+    /// <summary>
+    /// English: Process active selection when clicking mouse.　Perform OnClick() function for current selection
+    /// 日本語：パッシブ選択（マウスクリック）を処理する。現在に選択されているオブジェクトのOnClick()の関数を実行させる
+    /// </summary>
     public void ProcessActiveSelection()
     {
         curSelect = GetSelectableAtMousePosition();
@@ -129,11 +147,21 @@ public class SelectManager
         }
     }
 
+    /// <summary>
+    /// English: Set the state of the select manager
+    /// 日本語：状態を設定する
+    /// </summary>
+    /// <param name="state"></param>
     public void SetSelectState(State state)
     {
         this.state = state;
     }
 
+    /// <summary>
+    /// English: Return any instance that implement ISelectable at mouse position.
+    /// 日本語：マウスの位置にあり、ISelectableを実装するインスタンスを返す。
+    /// </summary>
+    /// <returns></returns>
     public ISelectable GetSelectableAtMousePosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition, Camera.MonoOrStereoscopicEye.Mono);

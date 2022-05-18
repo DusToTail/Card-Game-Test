@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class for containing and handling the movement of cards within the player's hand
+/// 日本語：プレイヤーの手にあるカードを持ち、カードの動きを管理するクラス
+/// </summary>
 public class PlayerHand : MonoBehaviour
 {
     [HideInInspector]
@@ -9,6 +13,7 @@ public class PlayerHand : MonoBehaviour
     public int initialDrawNumber;
     public GameObject pickedCard { get; private set; }
 
+    [Header("Movers")]
     [SerializeField]
     private GameObject toHandMovementTrigger;
     [SerializeField]
@@ -16,18 +21,21 @@ public class PlayerHand : MonoBehaviour
     [SerializeField]
     private GameObject inHandCardSelectResponseMovers;
 
+    [Header("Spread Card Mover Specifics")]
     [SerializeField]
     private Transform spreadCircleCenterPosition;
     [SerializeField]
     private float maxCardAngle;
     [SerializeField]
     private float maxHandAngle;
+    [SerializeField]
+    private bool displayGizmos;
 
-    private void Start()
-    {
-
-    }
-
+    /// <summary>
+    /// English: Add a card to this class's list. And trigger the move animation towards the player's hand
+    /// 日本語：カードをこのクラスのリストに追加する。その後、カードがプレイヤーの手に移動するよう、トリガーする
+    /// </summary>
+    /// <param name="card"></param>
     public void AddCardToHand(GameObject card)
     {
         if(card == null) { return; }
@@ -40,14 +48,25 @@ public class PlayerHand : MonoBehaviour
         MoveCardToHand();
     }
 
+    /// <summary>
+    /// English: Set this class's picked card to the parameter to perform movements such as playing card to the board
+    /// 日本語：ボードに出せるよう、このクラスのピックアップされたカードを設定する
+    /// </summary>
+    /// <param name="card"></param>
     public void AssignPickedUpCard(GameObject card)
     {
         if(card == null) { pickedCard = null; }
        pickedCard = card;
     }
 
+    /// <summary>
+    /// *** MAY BE REIMPLEMENTED (due to coupling multiple purposes: move card to hand & adjust cards in hand) ***
+    /// English: for each card in the list, move them to the appropriate position on the hand.
+    /// 日本語：リストにあるカードごとに、プレイヤーの手にある適切な位置に移動させる
+    /// </summary>
     private void MoveCardToHand()
     {
+        // Calculate the positions into an array
         float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
         float totalHandAngle = cards.Count * maxCardAngle;
         if (totalHandAngle > maxHandAngle) { totalHandAngle = maxHandAngle; }
@@ -63,8 +82,11 @@ public class PlayerHand : MonoBehaviour
             cardPositions[i] = new Vector3(x, y, z);
             Debug.DrawLine(cardPositions[i] + Vector3.forward, cardPositions[i] + Vector3.back, Color.yellow, 1);
         }
+
+        // Initialize the movers with their unique moveObject and movePosition (calculated above)
         for (int i = cards.Count - 1; i >= 0; i--)
         {
+            // Instantiate new movers and select responses if needed
             if (inHandMovementTriggers.transform.childCount < cards.Count)
             {
                 GameObject newTrigger = Instantiate(inHandMovementTriggers.transform.GetChild(0).gameObject, inHandMovementTriggers.transform);
@@ -88,7 +110,7 @@ public class PlayerHand : MonoBehaviour
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
             }
 
-            // May need refactor later on
+            // May need reimplementation later on due to bug
             inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().moveObject = cards[i];
             cards[i].GetComponent<CardSelectable>().SetSelectResponse(inHandCardSelectResponseMovers.transform.GetChild(i).gameObject);
             
@@ -98,6 +120,9 @@ public class PlayerHand : MonoBehaviour
     
     private void OnDrawGizmos()
     {
+        if (!displayGizmos) { return; }
+        // Draw the line where the cards will be placed in world position
+
         Gizmos.color = Color.magenta;
         float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
         Vector3[] vertices = new Vector3[20];
@@ -116,6 +141,5 @@ public class PlayerHand : MonoBehaviour
         {
             Gizmos.DrawLine(vertices[index], vertices[index + 1]);
         }
-        //Gizmos.DrawWireSphere(spreadCircleCenterPosition.position, radius);
     }
 }

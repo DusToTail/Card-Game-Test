@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// *** MAY MAKE INTO ONE STATIC HELPER CLASS ***
+/// English: Mover class that handles circular curve movement
+/// 日本語：円の動きを処理するMoverクラス
+/// </summary>
 public class CircularMovement : MonoBehaviour, IMovementTrigger
 {
     public GameObject nextMovementTrigger { get; set; }
@@ -87,7 +92,7 @@ public class CircularMovement : MonoBehaviour, IMovementTrigger
     {
         if (moveObject == null) { return; }
         moveObject.transform.position = circularCurve.CircularCurveLerp(t);
-        moveObject.transform.rotation = circularCurve.GetCircularCurveRotation(t);
+        moveObject.transform.rotation = circularCurve.LerpCircularCurveRotation(t);
 
     }
 }

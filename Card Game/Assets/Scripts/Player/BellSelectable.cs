@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class that processs the selection of the bell used to signal the start of the battle phase
+/// 日本語：バトルフェースをシグナルするベルが選択された時の処理をするクラス
+/// </summary>
 public class BellSelectable : MonoBehaviour, ISelectable
 {
     [SerializeField]
@@ -12,6 +16,10 @@ public class BellSelectable : MonoBehaviour, ISelectable
     public delegate void BellRinged();
     public static event BellRinged OnBellRinged;
 
+    /// <summary>
+    /// English: Call the OnBellRinged event
+    /// 日本語：OnBellRinged イベントをカールする
+    /// </summary>
     public void RingBell()
     {
         if (OnBellRinged != null)

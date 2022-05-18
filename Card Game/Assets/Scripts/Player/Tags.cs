@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: Tags for shortcuts when typing string
+/// 日本語：stringをタイプする時のショートカット
+/// </summary>
 public class Tags
 {
     public static readonly string SELECTABLE_LAYER = "Selectable";

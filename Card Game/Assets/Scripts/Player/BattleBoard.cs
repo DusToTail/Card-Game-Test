@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class for containing the grid that is used to place cards, and for handling movements on the boards
+/// 日本語：カードを出し載せるグリッドを持ちながら、ボード上の動きを処理するクラス
+/// </summary>
 [RequireComponent(typeof(BoxCollider))]
 public class BattleBoard : MonoBehaviour
 {
@@ -35,14 +39,19 @@ public class BattleBoard : MonoBehaviour
     private void Start()
     {
         GetComponent<BoxCollider>().size = new Vector3(boardSetting.cellSize.x * (float)boardSetting.gridSize.x, 1, boardSetting.cellSize.y * (float)boardSetting.gridSize.y);
-
     }
 
+    /// <summary>
+    /// English: Initialization of the boards by populating it with cells that are selectable
+    /// 日本語：選択可能のセルを居住させることによるボードの初期化する
+    /// </summary>
+    /// <param name="player"></param>
     public void InitializeBoard(BattlePlayer player)
     {
+        // Resize the board setting according to global scale of the object (*** MAY NEED TO BE REIMPLEMENTED ***)
         boardSetting.cellSize = new Vector2(transform.lossyScale.x / boardSetting.gridSize.x, transform.lossyScale.z / boardSetting.gridSize.y);
 
-        // Clear Childs
+        // Clear any childs (cells gameObject) that may already exist
         int count = transform.childCount;
         for(int i = count - 1; i >= 0; i--)
         {
@@ -56,7 +65,7 @@ public class BattleBoard : MonoBehaviour
             }
         }
 
-        // Initialize Childs
+        // Create and transform childs whilst initializing them at the same time
         for (int y = 0; y < boardSetting.gridSize.y; y++)
         {
             for (int x = 0; x < boardSetting.gridSize.x; x++)
@@ -76,6 +85,7 @@ public class BattleBoard : MonoBehaviour
             }
         }
 
+        // Initialize the class that allow selection on the cells
         for (int i = count - 1; i >= 0; i--)
         {
             transform.GetChild(i).gameObject.AddComponent<CellSelectable>();
@@ -84,51 +94,27 @@ public class BattleBoard : MonoBehaviour
 
     }
 
-    public ICell GetCellAtCoordinateXZ(Vector3 worldPosition)
-    {
-        return gridController.GetCellAtCoordinateXZ(worldPosition);
-    }
-
-
-    public GameObject GetCardAtCell(ICell cell)
-    {
-        if(cell == null) { return null; }
-        int index = cell.gridPosition.y * gridController.gridSize.x + cell.gridPosition.x;
-        GameObject checkChild = transform.GetChild(index).gameObject;
-        if(checkChild.transform.childCount == 0) { return null ; }
-        else { return checkChild.transform.GetChild(0).gameObject; }
-    }
-
-    private ICell[] GetOppositeCells(ICell cell)
-    {
-        if(cell == null) { return null;}
-
-        List<ICell> oppositeCells = new List<ICell>();
-        if(cell.gridPosition.y == 0)
-        {
-            oppositeCells.Add(gridController.grid[1, cell.gridPosition.x]);
-            oppositeCells.Add(gridController.grid[2, cell.gridPosition.x]);
-        }
-        else
-        {
-            oppositeCells.Add(gridController.grid[0, cell.gridPosition.x]);
-        }
-        return oppositeCells.ToArray();
-    }
-
+    /// <summary>
+    /// English: Command the card at grid position to attack (opposite card(s) or directly)
+    /// 日本語：グリッド位置にあるカードを向こうのカードをまたは相手を直接に攻撃させる
+    /// </summary>
+    /// <param name="cellGridPosition"></param>
     public void CardAtCellCommitAttack(Vector2Int cellGridPosition)
     {
+        // Validation check
         ICell cell = gridController.grid[cellGridPosition.y, cellGridPosition.x];
         if (cell == null) { return; }
         GameObject card = GetCardAtCell(cell);
         if (card == null) { return; }
+
+        // Check for cards that have health to attack 
         ICell[] oppositeCells = GetOppositeCells(cell);
         AttackCard[] healths = new AttackCard[oppositeCells.Length];
-        for(int i = 0; i < oppositeCells.Length; i++)
+        for (int i = 0; i < oppositeCells.Length; i++)
         {
             GameObject oppositeCard = GetCardAtCell(oppositeCells[i]);
-            if(oppositeCard == null && i == 0) { break; }
-            if(oppositeCard == null) { break; }
+            if (oppositeCard == null && i == 0) { break; }
+            if (oppositeCard == null) { break; }
 
             if (oppositeCard.GetComponent<AttackCard>() == null)
                 healths[i] = null;
@@ -136,6 +122,8 @@ public class BattleBoard : MonoBehaviour
                 healths[i] = GetCardAtCell(oppositeCells[i]).GetComponent<AttackCard>();
         }
 
+        // *** MAY BE REIMPLEMENTED ***
+        // Trigger attack animation (movement) when attacking
         if (cell.gridPosition.y == 0)
         {
             // For player
@@ -174,20 +162,30 @@ public class BattleBoard : MonoBehaviour
             attackTrigger.Trigger();
         }
 
+        // *** TO BE IMPLEMENTED ***
         // Wait until the animation of attacking is finished
 
+        // Instantly minus health of the opposing card(s) or directly
         card.GetComponent<IHaveAttack>().Attack(healths);
     }
 
+    /// <summary>
+    /// English: Command the card at grid position to move to the specified grid position
+    /// 日本語：グリッド位置にあるカードを指定されたグリッド位置に移動させる
+    /// </summary>
+    /// <param name="cellGridPosition"></param>
+    /// <param name="moveToGridPosition"></param>
     public void CardAtCellMoveTo(Vector2Int cellGridPosition, Vector2Int moveToGridPosition)
     {
+        // Validation Check
         ICell cell = gridController.grid[cellGridPosition.y, cellGridPosition.x];
         if (cell == null) { return; }
         GameObject card = GetCardAtCell(cell);
         if (card == null) { return; }
-
         ICell moveToCell = gridController.grid[moveToGridPosition.y, moveToGridPosition.x];
         if (moveToCell == null) { return; }
+
+        // Trigger movement (or animation)
         GameObject cardAtMoveToCell = GetCardAtCell(moveToCell);
         if (cardAtMoveToCell == null)
         {
@@ -210,7 +208,7 @@ public class BattleBoard : MonoBehaviour
             }
 
             Debug.Log($"Moved card to {moveToCell.gridPosition}");
-            return; 
+            return;
         }
         else
         {
@@ -221,10 +219,67 @@ public class BattleBoard : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// English: Return cell from world position
+    /// 日本語：ワールド位置からセルを返す
+    /// </summary>
+    /// <param name="worldPosition"></param>
+    /// <returns></returns>
+    public ICell GetCellAtCoordinateXZ(Vector3 worldPosition)
+    {
+        return gridController.GetCellAtCoordinateXZ(worldPosition);
+    }
+
+    /// <summary>
+    /// English: Return card from cell
+    /// 日本語：セルからカードを返す
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <returns></returns>
+    public GameObject GetCardAtCell(ICell cell)
+    {
+        // Validation Check
+        if(cell == null) { return null; }
+
+        int childIndex = cell.gridPosition.y * gridController.gridSize.x + cell.gridPosition.x;
+        GameObject checkChild = transform.GetChild(childIndex).gameObject;
+        if(checkChild.transform.childCount == 0) { return null ; }
+        else { return checkChild.transform.GetChild(0).gameObject; }
+    }
+
+    /// <summary>
+    /// *** MAY NEED TO BE REIMPLEMENTED (due to hard coded and the board design ***
+    /// English: Return an array of opposite cells
+    /// 日本語：向こうのセルの配列を返す
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <returns></returns>
+    private ICell[] GetOppositeCells(ICell cell)
+    {
+        // Validation Check
+        if(cell == null) { return null;}
+
+        List<ICell> oppositeCells = new List<ICell>();
+        if(cell.gridPosition.y == 0)
+        {
+            oppositeCells.Add(gridController.grid[1, cell.gridPosition.x]);
+            oppositeCells.Add(gridController.grid[2, cell.gridPosition.x]);
+        }
+        else
+        {
+            oppositeCells.Add(gridController.grid[0, cell.gridPosition.x]);
+        }
+
+        return oppositeCells.ToArray();
+    }
+
+    
+
     
     private void OnDrawGizmos()
     {
         if (!displayGizmos) { return; }
+        // Display an outline of the cells in yellow
         Vector2 cellSize = new Vector2(transform.lossyScale.x / boardSetting.gridSize.x, transform.lossyScale.z / boardSetting.gridSize.y);
         for (int x = 0; x < boardSetting.gridSize.x; x++)
         {

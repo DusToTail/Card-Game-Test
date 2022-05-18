@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class to control the size of the grid and cell and return cell at world position
+/// 日本語：グリッドとセルのサイズを管理したり、ワールド位置からセルを返したりするクラス
+/// </summary>
 public class TwoDimensionGridController : IGridController
 {
     public ICell[,] grid { get; private set; }
@@ -12,6 +16,13 @@ public class TwoDimensionGridController : IGridController
 
     public Vector3 startWorldPosition { get; private set; }
 
+    /// <summary>
+    /// English: Public constructor for initializing the necessary variables for creating the grid
+    /// 日本語：グリッドを作成するのに必要な変数を初期化するコンストラクタ
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="gridSize"></param>
+    /// <param name="cellSize"></param>
     public TwoDimensionGridController(Transform parent, Vector2Int gridSize, Vector2 cellSize)
     {
         InitializeGrid(parent, gridSize, cellSize);
@@ -23,7 +34,12 @@ public class TwoDimensionGridController : IGridController
         this.cellSize = cellSize;
     }
 
-
+    /// <summary>
+    /// English; Return a cell at world position using XZ coordinates
+    /// 日本語：ワールド位置のXZ座標でセルを返す
+    /// </summary>
+    /// <param name="worldPosition"></param>
+    /// <returns></returns>
     public ICell GetCellAtCoordinateXZ(Vector3 worldPosition)
     {
         float x = (worldPosition.x - startWorldPosition.x) / (2 * cellSize.x);
@@ -37,6 +53,13 @@ public class TwoDimensionGridController : IGridController
         return grid[gridPosition.y, gridPosition.x];
     }
 
+    /// <summary>
+    /// English: Initialize the grid
+    /// 日本語：グリッドを初期化する
+    /// </summary>
+    /// <param name="parent"></param>
+    /// <param name="gridSize"></param>
+    /// <param name="cellSize"></param>
     public void InitializeGrid(Transform parent, Vector2Int gridSize, Vector2 cellSize)
     {
         grid = new Cell[gridSize.y, gridSize.x];
@@ -44,30 +67,19 @@ public class TwoDimensionGridController : IGridController
         {
             for (int x = 0; x < gridSize.x; x++)
             {
-                //GameObject cell = new GameObject($"{x}:{y}");
-                //cell.transform.parent = parent;
-                //cell.gameObject.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
-                //cell.gameObject.tag = Tags.BATTLE_BOARD_CELL_TAG;
-                //cell.AddComponent<BoxCollider>();
-                //cell.GetComponent<BoxCollider>().size = new Vector3(cellSize.x, 1, cellSize.y);
-                //cell.transform.localPosition = Vector3.zero;
-                //Vector2Int centerGridPosition = new Vector2Int(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(gridSize.y / 2));
-                //Vector2Int dirFromCenter = new Vector2Int(x, y) - centerGridPosition;
-                //cell.transform.position += new Vector3(dirFromCenter.x * cellSize.x, 1, dirFromCenter.y * cellSize.y);
                 int childIndex = y * gridSize.x + x;
                 
                 grid[y, x] = new Cell(new Vector2Int(x,y), parent.GetChild(childIndex).transform.position, cellSize);
             }
         }
-        //for (int y = 0; y < gridSize.y; y++)
-        //{
-        //    for (int x = 0; x < gridSize.x; x++)
-        //    {
-        //        Debug.Log($"Cell at {grid[y, x].gridPosition} exists");
-        //    }
-        //}
     }
 
+    /// <summary>
+    /// English: Highlight the cell for seconds in scene view
+    /// 日本語：シーンビューでセルを秒でハイライトする
+    /// </summary>
+    /// <param name="cell"></param>
+    /// <param name="timeInSeconds"></param>
     public static void HighlightCellForSeconds(ICell cell, float timeInSeconds)
     {
         Vector3[] vertices = new Vector3[4];

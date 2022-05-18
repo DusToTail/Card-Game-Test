@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// English: A class for handling the creation of the squirrel deck. Draw a squirrel if clicked
+/// 日本語：リスデッキを管理するクラス。クリックすると、リスを一匹返す
+/// </summary>
 public class SquirrelDeck : MonoBehaviour, ISelectable
 {
     public Stack<GameObject> cards = new Stack<GameObject>();
@@ -14,16 +18,15 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
 
     private int _curHeight = 0;
 
-    private void Awake()
-    {
-    }
-
     private void Start()
     {
         BuildDeck(buildNum);
-
     }
 
+    /// <summary>
+    /// English: Clear the deck before creating a new one
+    /// 日本語：新なデッキを作る前にデッキをクリアする
+    /// </summary>
     public void ClearDeck()
     {
         int count = transform.childCount;
@@ -43,6 +46,12 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
         _curHeight = 0;
     }
 
+    /// <summary>
+    /// *** MAY NEED REIMPLEMENTATION ***
+    /// English: Create a deck of count number of prefab cards stacking on top of each other
+    /// 日本語：count枚のプリハブのカードのデッキを作る。
+    /// </summary>
+    /// <param name="count"></param>
     public void BuildDeck(int count)
     {
         for (int i = 0; i < count; i++)

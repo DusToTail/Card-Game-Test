@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// *** MAY MAKE INTO ONE STATIC HELPER CLASS ***
+/// English: Class that holds a circular curve and handles lerp operation
+/// 日本語：円のカーブを持ち、Lerpを処理するクラス
+/// </summary>
 public class CircularCurve : MonoBehaviour
 {
     public Transform startPoint;
@@ -12,6 +17,11 @@ public class CircularCurve : MonoBehaviour
     [SerializeField]
     private bool displayGizmos;
 
+    /// <summary>
+    /// English: Lerp position calculated from start point to end point away from a circle center
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
     public Vector3 CircularCurveLerp(float t)
     {
         Vector3 result = Vector3.zero;
@@ -26,7 +36,12 @@ public class CircularCurve : MonoBehaviour
         return result;
     }
 
-    public Quaternion GetCircularCurveRotation(float t)
+    /// <summary>
+    /// English: Lerp rotation calculated from start point to end point away from a circle center
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public Quaternion LerpCircularCurveRotation(float t)
     {
         Quaternion result = new Quaternion();
         if (circleCenter == null || startPoint == null || endPoint == null) { return result; }
