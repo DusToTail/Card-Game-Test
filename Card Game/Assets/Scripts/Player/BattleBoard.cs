@@ -14,7 +14,11 @@ public class BattleBoard : MonoBehaviour
     [SerializeField]
     private GameObject allyMoversOnBoard;
     [SerializeField]
+    private GameObject allyAttackersOnBoard;
+    [SerializeField]
     private GameObject enemyMoversOnBoard;
+    [SerializeField]
+    private GameObject enemyAttackersOnBoard;
 
     [SerializeField]
     private bool displayGizmos;
@@ -118,7 +122,6 @@ public class BattleBoard : MonoBehaviour
         if (cell == null) { return; }
         GameObject card = GetCardAtCell(cell);
         if (card == null) { return; }
-
         ICell[] oppositeCells = GetOppositeCells(cell);
         AttackCard[] healths = new AttackCard[oppositeCells.Length];
         for(int i = 0; i < oppositeCells.Length; i++)
@@ -133,15 +136,45 @@ public class BattleBoard : MonoBehaviour
                 healths[i] = GetCardAtCell(oppositeCells[i]).GetComponent<AttackCard>();
         }
 
-        // Trigger animation for attacking
-        if(healths[0] == null)
+        if (cell.gridPosition.y == 0)
         {
-            // Direck Attack
+            // For player
+            // Trigger animation for attacking
+            IMovementTrigger attackTrigger = allyAttackersOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>();
+
+            if (healths[0] == null)
+            {
+                // Direck Attack
+                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[1].worldPosition + transform.up);
+            }
+            else
+            {
+                // Attack opposite card(s)
+                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
+            }
+            attackTrigger.Trigger();
         }
         else
         {
-            // Attack opposite card(s)
+            // For AI / Opponent
+            // Trigger animation for attacking
+            IMovementTrigger attackTrigger = enemyAttackersOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>();
+
+            if (healths[0] == null)
+            {
+                // Direck Attack
+                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
+
+            }
+            else
+            {
+                // Attack opposite card(s)
+                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
+            }
+            attackTrigger.Trigger();
         }
+
+        
 
         card.GetComponent<IHaveAttack>().Attack(healths);
     }
