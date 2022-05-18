@@ -23,6 +23,7 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
 
     private float t = 0;
     private bool isSelected = false;
+    private bool initializedOnce = false;
 
     public enum Direction
     {
@@ -69,8 +70,13 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
 
     private void Initialize()
     {
-        bezierCurve.controlPoints[0].position = moveObject.transform.position;
-        bezierCurve.controlPoints[0].rotation = moveObject.transform.rotation;
+        if(!initializedOnce)
+        {
+            bezierCurve.controlPoints[0].position = moveObject.transform.position;
+            bezierCurve.controlPoints[0].rotation = moveObject.transform.rotation;
+        }
+        
+        initializedOnce = true;
         if (useTowardsTransform)
         {
             if (towards != null)
