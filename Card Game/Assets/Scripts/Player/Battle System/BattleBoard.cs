@@ -108,6 +108,8 @@ public class BattleBoard : MonoBehaviour
         if (cell == null) { yield break; }
         GameObject card = GetCardAtCell(cell);
         if (card == null) { yield break; }
+        if(card.GetComponent<IHaveAttack>().GetCurrentAttackDamage() == 0) { yield break; }
+
 
         // Check for cards that have health to attack 
         ICell[] oppositeCells = GetOppositeCells(cell);

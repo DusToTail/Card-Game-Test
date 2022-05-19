@@ -104,103 +104,88 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     }
 
     /// <summary>
-    /// *** MAY BE IMPLEMENTED
-    /// English: Check if enough sacrifices are made to play this card
-    /// 日本語：このカードを出すのに必要な生贄の数は十分かどうかチェックする
+    /// English: Adds an amount to the card's initial attack damage. Does not accept negative or zero amount
+    /// 日本語：カードの初期の攻撃力を増やす。量はポジティブのみ
     /// </summary>
-    /// <returns></returns>
-    public bool IsSatisfied()
+    /// <param name="amount"></param>
+    public void PlusInitialAttackDamage(int amount)
     {
-        return _curSacrificeCount >= sacrificeNum;
-    }
-
-    /// <summary>
-    /// *** TO BE IMPLEMENTED
-    /// English: Sacrifice cards with health
-    /// 日本語：体力のあるカードを犠牲する
-    /// </summary>
-    /// <param name="sacrificeCount"></param>
-    public void Sacrifice(IHaveHealth[] sacrificeCount)
-    {
-        // Trigger sacrificed card sacriface animation and destroy them
-    }
-
-    /// <summary>
-    /// *** TO BE IMPLEMENTED ***
-    /// English: Add an ability to this card
-    /// 日本語：能力をこのカードに追加する
-    /// </summary>
-    /// <param name="ability"></param>
-    public void AddAbility(IAbility ability)
-    {
-        // Trigger spin animation to prevent player from looking at the front of the card when adding the ability
-        // Add a game object containing the ability
-    }
-
-    /// <summary>
-    /// *** TO BE IMPLEMENTED ***
-    /// English: Remove an ability from this card
-    /// 日本語：このカードから能力を抜く
-    /// </summary>
-    /// <param name="ability"></param>
-    public void RemoveAbility(IAbility ability)
-    {
-        // Trigger a removal animation (similar to Inscryption's paint brush item)
-        // Remove the according game object containing the ability
-    }
-
-    /// <summary>
-    /// English: Return the list containing this card's abilities
-    /// 日本語：このカードの能力リストを返す
-    /// </summary>
-    /// <returns></returns>
-    public List<IAbility> GetAbilities()
-    {
-        return _abilityList;
-    }
-
-    /// <summary>
-    /// English: Initialize the stats of this card to prepare for battle
-    /// 日本語：バトルの初めにこのカードの数値を初期化する
-    /// </summary>
-    public void InitializeStats()
-    {
-        _curHealth = initialHealth;
-        _curAttackDamage = initialAttackDamage;
-        _actualAttackDamage = _curAttackDamage;
-        _curSacrificeCount = 0;
-
-        UpdateNameText();
+        if (amount <= 0) { return; }
+        initialAttackDamage += amount;
         UpdateStatsText(false);
     }
 
     /// <summary>
-    /// English: Update the text regarding stats of this card during OR outside battle
-    /// 日本語：バトル中またはバトル外、このカードの数値に応じてテクストを更新する
+    /// English: Minus an amount to the card's initial attack damage. Does not accept negative or zero amount
+    /// 日本語：カードの初期の攻撃力を低下する。量はポジティブのみ
     /// </summary>
-    /// <param name="duringBattle"></param>
-    public void UpdateStatsText(bool duringBattle)
+    /// <param name="amount"></param>
+    public void MinusInitialAttackDamage(int amount)
     {
-        if(duringBattle)
-        {
-            healthTextMesh.text = _curHealth.ToString();
-            powerTextMesh.text = _actualAttackDamage.ToString();
-        }
-        else
-        {
-            healthTextMesh.text = initialHealth.ToString();
-            powerTextMesh.text = initialAttackDamage.ToString();
-        }
+        if (amount <= 0) { return; }
+        initialAttackDamage -= amount;
+        if (initialAttackDamage < 0) { initialAttackDamage = 0; }
+        UpdateStatsText(false);
     }
 
     /// <summary>
-    /// English: Update the text regarding the name of this card
-    /// 日本語：このカードの数値に応じてテクストを更新する
+    /// English: Adds an amount to the card's current attack damage. Does not accept negative or zero amount
+    /// 日本語：カードの現在の攻撃力を増やす。量はポジティブのみ
     /// </summary>
-    public void UpdateNameText()
+    /// <param name="amount"></param>
+    public void PlusCurrentAttackDamage(int amount)
     {
-        nameTextMesh.text = cardName;
+        if (amount <= 0) { return; }
+        _curAttackDamage += amount;
+        UpdateStatsText(true);
     }
+
+    /// <summary>
+    /// English: Minus an amount to the card's current attack damage. Does not accept negative or zero amount
+    /// 日本語：カードの現在の攻撃力を低下する。量はポジティブのみ
+    /// </summary>
+    /// <param name="amount"></param>
+    public void MinusCurrentAttackDamage(int amount)
+    {
+        if (amount <= 0) { return; }
+        _curAttackDamage -= amount;
+        if (_curAttackDamage < 0) { _curAttackDamage = 0; }
+        UpdateStatsText(true);
+    }
+
+    /// <summary>
+    /// English: Return the card's actual attack damage
+    /// 日本語：カードの実際の攻撃力を返す
+    /// </summary>
+    /// <returns></returns>
+    public int GetActualAttackDamage()
+    {
+        return _actualAttackDamage;
+    }
+
+    /// <summary>
+    /// English: Return the card's current attack damage
+    /// 日本語：カードの現在の攻撃力を返す
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrentAttackDamage()
+    {
+        return _curAttackDamage;
+    }
+
+    /// <summary>
+    /// English: Return the card's initial attack damage
+    /// 日本語：カードの初期の攻撃力を返す
+    /// </summary>
+    /// <returns></returns>
+    public int GetInitialAttackDamage()
+    {
+        return initialAttackDamage;
+    }
+
+    
+
+    
 
     /// <summary>
     /// English: Adds an amount to the card's initial health. Does not accept negative or zero amount
@@ -330,8 +315,102 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
         return cardDescription;
     }
 
-    
+    /// <summary>
+    /// English: Initialize the stats of this card to prepare for battle
+    /// 日本語：バトルの初めにこのカードの数値を初期化する
+    /// </summary>
+    public void InitializeStats()
+    {
+        _curHealth = initialHealth;
+        _curAttackDamage = initialAttackDamage;
+        _actualAttackDamage = _curAttackDamage;
+        _curSacrificeCount = 0;
 
+        UpdateNameText();
+        UpdateStatsText(false);
+    }
 
-    
+    /// <summary>
+    /// English: Update the text regarding stats of this card during OR outside battle
+    /// 日本語：バトル中またはバトル外、このカードの数値に応じてテクストを更新する
+    /// </summary>
+    /// <param name="duringBattle"></param>
+    public void UpdateStatsText(bool duringBattle)
+    {
+        if (duringBattle)
+        {
+            healthTextMesh.text = _curHealth.ToString();
+            powerTextMesh.text = _actualAttackDamage.ToString();
+        }
+        else
+        {
+            healthTextMesh.text = initialHealth.ToString();
+            powerTextMesh.text = initialAttackDamage.ToString();
+        }
+    }
+
+    /// <summary>
+    /// English: Update the text regarding the name of this card
+    /// 日本語：このカードの数値に応じてテクストを更新する
+    /// </summary>
+    public void UpdateNameText()
+    {
+        nameTextMesh.text = cardName;
+    }
+
+    /// <summary>
+    /// *** MAY BE IMPLEMENTED
+    /// English: Check if enough sacrifices are made to play this card
+    /// 日本語：このカードを出すのに必要な生贄の数は十分かどうかチェックする
+    /// </summary>
+    /// <returns></returns>
+    public bool IsSatisfied()
+    {
+        return _curSacrificeCount >= sacrificeNum;
+    }
+
+    /// <summary>
+    /// *** TO BE IMPLEMENTED
+    /// English: Sacrifice cards with health
+    /// 日本語：体力のあるカードを犠牲する
+    /// </summary>
+    /// <param name="sacrificeCount"></param>
+    public void Sacrifice(IHaveHealth[] sacrificeCount)
+    {
+        // Trigger sacrificed card sacriface animation and destroy them
+    }
+
+    /// <summary>
+    /// *** TO BE IMPLEMENTED ***
+    /// English: Add an ability to this card
+    /// 日本語：能力をこのカードに追加する
+    /// </summary>
+    /// <param name="ability"></param>
+    public void AddAbility(IAbility ability)
+    {
+        // Trigger spin animation to prevent player from looking at the front of the card when adding the ability
+        // Add a game object containing the ability
+    }
+
+    /// <summary>
+    /// *** TO BE IMPLEMENTED ***
+    /// English: Remove an ability from this card
+    /// 日本語：このカードから能力を抜く
+    /// </summary>
+    /// <param name="ability"></param>
+    public void RemoveAbility(IAbility ability)
+    {
+        // Trigger a removal animation (similar to Inscryption's paint brush item)
+        // Remove the according game object containing the ability
+    }
+
+    /// <summary>
+    /// English: Return the list containing this card's abilities
+    /// 日本語：このカードの能力リストを返す
+    /// </summary>
+    /// <returns></returns>
+    public List<IAbility> GetAbilities()
+    {
+        return _abilityList;
+    }
 }

@@ -42,7 +42,6 @@ public class PlayerHand : MonoBehaviour
 
         card.transform.parent = transform;
         cards.Add(card);
-        Debug.Log($"Add {card.name} to hand");
         // Trigger animation to move the card to hand and adjust orientation
         yield return StartCoroutine(MoveCardToHand());
 
