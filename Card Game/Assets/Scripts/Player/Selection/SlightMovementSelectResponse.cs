@@ -9,6 +9,8 @@ using UnityEngine;
 public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
 {
     public GameObject moveObject { get; set; }
+    public bool initializedOnce { get; set; }
+
     [SerializeField]
     private BezierCurve bezierCurve;
     
@@ -29,7 +31,6 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
 
     private float t = 0;
     private bool isSelected = false;
-    private bool initializedOnce = false;
 
     public enum Direction
     {
@@ -46,6 +47,7 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
     {
         // if selected, continues to move towards the destination.
         // if unselected, continues to move back to the starting point.
+        if (!initializedOnce) { return; }
         if(moveObject == null) { return; }
         if(isSelected && t > 1) { return; }
         if(!isSelected && t < 0) { return; }

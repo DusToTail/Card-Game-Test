@@ -10,6 +10,7 @@ using UnityEngine;
 public class BattleBoard : MonoBehaviour
 {
     public IGridController gridController { get; private set; }
+    public bool isBusy { get; private set; }
 
     [SerializeField]
     private BoardScriptableObject boardSetting;
@@ -39,6 +40,7 @@ public class BattleBoard : MonoBehaviour
     private void Start()
     {
         GetComponent<BoxCollider>().size = new Vector3(boardSetting.cellSize.x * (float)boardSetting.gridSize.x, 1, boardSetting.cellSize.y * (float)boardSetting.gridSize.y);
+        isBusy = false;
     }
 
     /// <summary>
@@ -99,13 +101,13 @@ public class BattleBoard : MonoBehaviour
     /// 日本語：グリッド位置にあるカードを向こうのカードをまたは相手を直接に攻撃させる
     /// </summary>
     /// <param name="cellGridPosition"></param>
-    public void CardAtCellCommitAttack(Vector2Int cellGridPosition)
+    public IEnumerator CardAtCellCommitAttack(Vector2Int cellGridPosition)
     {
         // Validation check
         ICell cell = gridController.grid[cellGridPosition.y, cellGridPosition.x];
-        if (cell == null) { return; }
+        if (cell == null) { yield break; }
         GameObject card = GetCardAtCell(cell);
-        if (card == null) { return; }
+        if (card == null) { yield break; }
 
         // Check for cards that have health to attack 
         ICell[] oppositeCells = GetOppositeCells(cell);
@@ -122,7 +124,6 @@ public class BattleBoard : MonoBehaviour
                 healths[i] = GetCardAtCell(oppositeCells[i]).GetComponent<AttackCard>();
         }
 
-        // *** MAY BE REIMPLEMENTED ***
         // Trigger attack animation (movement) when attacking
         if (cell.gridPosition.y == 0)
         {
@@ -141,6 +142,8 @@ public class BattleBoard : MonoBehaviour
                 attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
             }
             attackTrigger.Trigger();
+
+            yield return new WaitUntil(() => attackTrigger.isFinished);
         }
         else
         {
@@ -160,13 +163,14 @@ public class BattleBoard : MonoBehaviour
                 attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
             }
             attackTrigger.Trigger();
-        }
 
-        // *** TO BE IMPLEMENTED ***
-        // Wait until the animation of attacking is finished
+            yield return new WaitUntil(() => attackTrigger.isFinished);
+        }
 
         // Instantly minus health of the opposing card(s) or directly
         card.GetComponent<IHaveAttack>().Attack(healths);
+
+        isBusy = false;
     }
 
     /// <summary>
@@ -175,15 +179,15 @@ public class BattleBoard : MonoBehaviour
     /// </summary>
     /// <param name="cellGridPosition"></param>
     /// <param name="moveToGridPosition"></param>
-    public void CardAtCellMoveTo(Vector2Int cellGridPosition, Vector2Int moveToGridPosition)
+    public IEnumerator CardAtCellMoveTo(Vector2Int cellGridPosition, Vector2Int moveToGridPosition)
     {
         // Validation Check
         ICell cell = gridController.grid[cellGridPosition.y, cellGridPosition.x];
-        if (cell == null) { return; }
+        if (cell == null) { yield break; }
         GameObject card = GetCardAtCell(cell);
-        if (card == null) { return; }
+        if (card == null) { yield break; }
         ICell moveToCell = gridController.grid[moveToGridPosition.y, moveToGridPosition.x];
-        if (moveToCell == null) { return; }
+        if (moveToCell == null) { yield break; }
 
         // Trigger movement (or animation)
         GameObject cardAtMoveToCell = GetCardAtCell(moveToCell);
@@ -198,6 +202,7 @@ public class BattleBoard : MonoBehaviour
                 allyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(card, moveToCell.worldPosition + transform.up);
                 allyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().Trigger();
                 card.transform.parent = childCell.transform;
+                yield return new WaitUntil(() => allyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().isFinished);
             }
             else
             {
@@ -205,18 +210,17 @@ public class BattleBoard : MonoBehaviour
                 enemyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(card, moveToCell.worldPosition + transform.up);
                 enemyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().Trigger();
                 card.transform.parent = childCell.transform;
+                yield return new WaitUntil(() => enemyMoversOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>().isFinished);
             }
 
             Debug.Log($"Moved card to {moveToCell.gridPosition}");
-            return;
         }
         else
         {
             Debug.Log($"Cant move card to {moveToCell.gridPosition} due to occupied card");
-            return;
         }
 
-
+        isBusy = false;
     }
 
     /// <summary>

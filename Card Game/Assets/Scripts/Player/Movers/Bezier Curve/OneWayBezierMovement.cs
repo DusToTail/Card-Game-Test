@@ -10,6 +10,8 @@ using UnityEngine;
 public class OneWayBezierMovement : MonoBehaviour, IMovementTrigger
 {
     public GameObject nextMovementTrigger { get; set; }
+    public bool isFinished { get; set; }
+
     [SerializeField]
     private BezierCurve bezierCurve;
     [SerializeField]
@@ -17,22 +19,25 @@ public class OneWayBezierMovement : MonoBehaviour, IMovementTrigger
     private GameObject moveObject;
 
     private float t = 0;
-    private bool movementFinished;
+
+    private void Awake()
+    {
+        isFinished = true;
+    }
 
     private void Start()
     {
-        movementFinished = true;
     }
 
     private void Update()
     {
-        if (movementFinished) { return; }
+        if (isFinished) { return; }
         MoveInBezierCurve(moveObject, t);
         t += Time.deltaTime * speed;
         if(t >= 1)
         {
             MoveInBezierCurve(moveObject, t);
-            movementFinished = true;
+            isFinished = true;
             moveObject = null;
             if (nextMovementTrigger != null)
                 InitializeNextMovementTrigger(nextMovementTrigger.GetComponent<IMovementTrigger>());
@@ -83,7 +88,7 @@ public class OneWayBezierMovement : MonoBehaviour, IMovementTrigger
 
     public void Trigger()
     {
-        movementFinished = false;
+        isFinished = false;
     }
 
     private void MoveInBezierCurve(GameObject moveObject, float t)

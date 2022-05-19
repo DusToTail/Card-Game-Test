@@ -10,7 +10,7 @@ using UnityEngine;
 public class TwoWayBezierMovement : MonoBehaviour, IMovementTrigger
 {
     public GameObject nextMovementTrigger { get; set; }
-
+    public bool isFinished { get; set; }
     [SerializeField]
     private BezierCurve bezierCurve;
     [SerializeField]
@@ -21,16 +21,19 @@ public class TwoWayBezierMovement : MonoBehaviour, IMovementTrigger
 
     private float t = 0;
     private bool isReversed = false;
-    private bool movementFinished;
+
+    private void Awake()
+    {
+        isFinished = true;
+    }
 
     private void Start()
     {
-        movementFinished = true;
     }
 
     private void Update()
     {
-        if (movementFinished) { return; }
+        if (isFinished) { return; }
         // Movement function
         MoveInBezierCurve(moveObject, t);
         if(!isReversed)
@@ -46,7 +49,7 @@ public class TwoWayBezierMovement : MonoBehaviour, IMovementTrigger
         {
             // Movement function
             MoveInBezierCurve(moveObject, t);
-            movementFinished = true;
+            isFinished = true;
             moveObject = null;
             if (nextMovementTrigger != null)
                 InitializeNextMovementTrigger(nextMovementTrigger.GetComponent<IMovementTrigger>());
@@ -119,7 +122,7 @@ public class TwoWayBezierMovement : MonoBehaviour, IMovementTrigger
 
     public void Trigger()
     {
-        movementFinished = false;
+        isFinished = false;
         isReversed = false;
     }
 

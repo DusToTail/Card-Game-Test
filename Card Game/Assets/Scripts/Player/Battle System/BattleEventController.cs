@@ -59,6 +59,7 @@ public class BattleEventController : MonoBehaviour
     /// </summary>
     public void StartPlayerBattlePhaseCoroutine()
     {
+        Debug.Log("Start Player's Turn");
         StartCoroutine(PlayerBattlePhaseCoroutine());
     }
 
@@ -76,7 +77,7 @@ public class BattleEventController : MonoBehaviour
         {
             ICell cell = player.board.gridController.grid[0, index];
 
-            player.board.CardAtCellCommitAttack(cell.gridPosition);
+            yield return StartCoroutine(player.board.CardAtCellCommitAttack(cell.gridPosition));
 
             // *** TO BE IMPLEMENTED ***
             // Trigger battle and abilities for each card as below:
@@ -88,8 +89,7 @@ public class BattleEventController : MonoBehaviour
             // Highlight in Scene View
             TwoDimensionGridController.HighlightCellForSeconds(cell, 0.5f);
 
-            // *** TO BE REIMPLEMENTED ***
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitUntil(() => !player.board.isBusy);
         }
         
         // Prohibit player from selecting / making actions during enemy's turn
@@ -106,6 +106,7 @@ public class BattleEventController : MonoBehaviour
     /// </summary>
     public void StartEnemyBattlePhaseCoroutine()
     {
+        Debug.Log("Start Enemy's Turn");
         StartCoroutine(EnemyBattlePhaseCoroutine());
     }
 
@@ -122,14 +123,11 @@ public class BattleEventController : MonoBehaviour
             ICell backCell = player.board.gridController.grid[2, index];
 
             ICell frontCell = player.board.gridController.grid[1, index];
-            
-            player.board.CardAtCellMoveTo(backCell.gridPosition, frontCell.gridPosition);
+
+            yield return StartCoroutine(player.board.CardAtCellMoveTo(backCell.gridPosition, frontCell.gridPosition));
             TwoDimensionGridController.HighlightCellForSeconds(backCell, 0.5f);
 
-            // *** TO BE REIMPLEMENTED ***
-            yield return new WaitForSeconds(0.5f);
-
-            player.board.CardAtCellCommitAttack(frontCell.gridPosition);
+            yield return StartCoroutine(player.board.CardAtCellCommitAttack(frontCell.gridPosition));
 
             // *** TO BE IMPLEMENTED ***
             // Trigger battle and abilities for each card as below:
@@ -141,10 +139,9 @@ public class BattleEventController : MonoBehaviour
             // Highlight in Scene View
             TwoDimensionGridController.HighlightCellForSeconds(frontCell, 0.5f);
 
-            // *** TO BE REIMPLEMENTED ***
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitUntil(() => !player.board.isBusy);
         }
-        
+
         // Start of the next round, allowing player to draw a card from deck and making other simple movement
         player.selectManager.SetSelectState(SelectManager.State.DrawFromDeck);
         Debug.Log($"End Enemy's Turn");

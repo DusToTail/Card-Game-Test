@@ -20,11 +20,11 @@ public class BattlePlayerEditor : Editor
         }
         if (GUILayout.Button("Draw One From Player Deck"))
         {
-            myPlayer.DrawOneFromPlayerDeck();
+            myPlayer.DrawOneFromPlayerDeck(false);
         }
         if (GUILayout.Button("Draw One Squirrel"))
         {
-            myPlayer.DrawOneSquirrel();
+            myPlayer.DrawOneSquirrel(false);
         }
     }
 }

@@ -18,9 +18,13 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
 
     private int _curHeight = 0;
 
-    private void Start()
+    private void Awake()
     {
         BuildDeck(buildNum);
+    }
+
+    private void Start()
+    {
     }
 
     /// <summary>
@@ -84,7 +88,7 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
         if(player.selectManager.state == SelectManager.State.DrawFromDeck)
         {
             Debug.Log($"Clicked on {this.gameObject.name}");
-            player.DrawOneSquirrel();
+            StartCoroutine(player.DrawOneSquirrel(false));
         }
     }
 }

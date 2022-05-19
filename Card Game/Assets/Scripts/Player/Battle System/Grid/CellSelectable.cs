@@ -39,7 +39,7 @@ public class CellSelectable : MonoBehaviour, ISelectable
 
         if(player.selectManager.state == SelectManager.State.CardToBoard)
         {
-            player.hand.pickedCard.GetComponent<CardSelectable>().PlayCardOnBoard(cell);
+            StartCoroutine(player.hand.pickedCard.GetComponent<CardSelectable>().PlayCardOnBoard(cell));
         }
 
     }

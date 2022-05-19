@@ -21,7 +21,6 @@ Left click:
 
 # Notes:
 Bugs or Fixes need to be patched:
-+A bug where the card instantly after being drawn would snapped to the right if mouse is hovered over the card before it stablizes in hand
 +Unable to put the card back to hand after picking it up (not implemented)
 +No visual indication for cells to easily select
 +No visual indication for deck to easily select

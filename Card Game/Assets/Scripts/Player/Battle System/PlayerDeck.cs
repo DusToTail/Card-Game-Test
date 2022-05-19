@@ -141,7 +141,7 @@ public class PlayerDeck : MonoBehaviour, ISelectable
         if(battlePlayer.selectManager.state == SelectManager.State.DrawFromDeck)
         {
             Debug.Log($"Clicked on {this.gameObject.name}");
-            battlePlayer.DrawOneFromPlayerDeck();
+            StartCoroutine(battlePlayer.DrawOneFromPlayerDeck(false));
         }
         
     }

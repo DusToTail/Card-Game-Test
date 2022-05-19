@@ -36,16 +36,17 @@ public class PlayerHand : MonoBehaviour
     /// 日本語：カードをこのクラスのリストに追加する。その後、カードがプレイヤーの手に移動するよう、トリガーする
     /// </summary>
     /// <param name="card"></param>
-    public void AddCardToHand(GameObject card)
+    public IEnumerator AddCardToHand(GameObject card)
     {
-        if(card == null) { return; }
+        if(card == null) { yield break; }
 
         card.transform.parent = transform;
-        card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
         cards.Add(card);
-
+        Debug.Log($"Add {card.name} to hand");
         // Trigger animation to move the card to hand and adjust orientation
-        MoveCardToHand();
+        yield return StartCoroutine(MoveCardToHand());
+
+        card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
     }
 
     /// <summary>
@@ -60,11 +61,10 @@ public class PlayerHand : MonoBehaviour
     }
 
     /// <summary>
-    /// *** MAY BE REIMPLEMENTED (due to coupling multiple purposes: move card to hand & adjust cards in hand) ***
     /// English: for each card in the list, move them to the appropriate position on the hand.
     /// 日本語：リストにあるカードごとに、プレイヤーの手にある適切な位置に移動させる
     /// </summary>
-    private void MoveCardToHand()
+    private IEnumerator MoveCardToHand()
     {
         // Calculate the positions into an array
         float radius = (spreadCircleCenterPosition.position - transform.position).magnitude;
@@ -95,23 +95,27 @@ public class PlayerHand : MonoBehaviour
                 newCardSelectResponse.name = inHandCardSelectResponseMovers.transform.GetChild(0).name;
             }
 
-            if (i < cards.Count - 1)
+            if (i < cards.Count - 1 && cards.Count > 1)
             {
                 // In hand to adjust for incoming card
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().Trigger();
+                yield return new WaitUntil(() => inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().isFinished);
             }
             else
             {
                 // From deck
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
-                inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
-                toHandMovementTrigger.GetComponent<IMovementTrigger>().nextMovementTrigger = inHandMovementTriggers.transform.GetChild(i).gameObject;
                 toHandMovementTrigger.GetComponent<IMovementTrigger>().Trigger();
+                yield return new WaitUntil(() => toHandMovementTrigger.transform.GetComponent<IMovementTrigger>().isFinished);
+                inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
+                inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().Trigger();
+                yield return new WaitUntil(() => inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().isFinished);
             }
 
-            // May need reimplementation later on due to bug
             inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().moveObject = cards[i];
+            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().initializedOnce = false;
+
             cards[i].GetComponent<CardSelectable>().SetSelectResponse(inHandCardSelectResponseMovers.transform.GetChild(i).gameObject);
             
         }

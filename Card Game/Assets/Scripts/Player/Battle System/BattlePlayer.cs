@@ -21,12 +21,12 @@ public class BattlePlayer : MonoBehaviour
 
     private void OnEnable()
     {
-        BattleEventController.OnPreparationFinished += AllowSelection;
+        BattleEventController.OnPreparationFinished += StartWithInitialHand;
     }
 
     private void OnDisable()
     {
-        BattleEventController.OnPreparationFinished -= AllowSelection;
+        BattleEventController.OnPreparationFinished -= StartWithInitialHand;
 
     }
 
@@ -56,26 +56,25 @@ public class BattlePlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// *** MAY NEED REIMPLEMENTATION or RENAME ***
-    /// English: Allow draw from deck
+    /// English: Start the game with the initial hand
     /// 日本語：デッキからドローすることを可能にする
     /// </summary>
-    public void AllowSelection()
+    public void StartWithInitialHand()
     {
-        selectManager.SetSelectState(SelectManager.State.DrawFromDeck);
+        StartCoroutine(DrawInitialHand());
     }
 
+
     /// <summary>
-    /// *** NEED REIMPLEMENTATION (due to positions of cards getting constantly overwritten as start position for movers before reaching the destination)
     /// English: Draw the intial hand when the battle starts
     /// 日本語：バトル開始に初めの手をドローする
     /// </summary>
-    public void DrawInitialHand()
+    public IEnumerator DrawInitialHand()
     {
-        DrawOneSquirrel();
+        yield return StartCoroutine(DrawOneSquirrel(true));
         for (int i = 0; i < hand.initialDrawNumber - 1; i++)
         {
-            DrawOneFromPlayerDeck();
+            yield return StartCoroutine(DrawOneFromPlayerDeck(true));
         }
         selectManager.SetSelectState(SelectManager.State.CardInHand);
     }
@@ -84,13 +83,14 @@ public class BattlePlayer : MonoBehaviour
     /// English: Draw one card from player deck
     /// 日本語：プレイヤーデッキから一枚を引く
     /// </summary>
-    public void DrawOneFromPlayerDeck()
+    public IEnumerator DrawOneFromPlayerDeck(bool isInitialHand)
     {
-        if (playerDeck.cards.Count == 0) { return; }
+        if (playerDeck.cards.Count == 0) { yield break; }
         Debug.Log("Draw one from player deck");
         GameObject card = playerDeck.cards.Pop();
-        hand.AddCardToHand(card);
-        selectManager.SetSelectState(SelectManager.State.CardInHand);
+        yield return StartCoroutine(hand.AddCardToHand(card));
+        if (!isInitialHand)
+            selectManager.SetSelectState(SelectManager.State.CardInHand);
 
     }
 
@@ -98,13 +98,14 @@ public class BattlePlayer : MonoBehaviour
     /// English: Draw one card from squirrel deck
     /// 日本語：リスデッキから一枚を引く
     /// </summary>
-    public void DrawOneSquirrel()
+    public IEnumerator DrawOneSquirrel(bool isInitialHand)
     {
-        if (squirrelDeck.cards.Count == 0) { return; }
+        if (squirrelDeck.cards.Count == 0) { yield break; }
         Debug.Log("Draw one from squirrel deck");
         GameObject card = squirrelDeck.cards.Pop();
-        hand.AddCardToHand(card);
-        selectManager.SetSelectState(SelectManager.State.CardInHand);
+        yield return StartCoroutine(hand.AddCardToHand(card));
+        if(!isInitialHand)
+            selectManager.SetSelectState(SelectManager.State.CardInHand);
 
     }
 

@@ -10,6 +10,7 @@ using UnityEngine;
 public class CircularMovement : MonoBehaviour, IMovementTrigger
 {
     public GameObject nextMovementTrigger { get; set; }
+    public bool isFinished { get; set; }
     [SerializeField]
     private CircularCurve circularCurve;
     [SerializeField]
@@ -19,22 +20,25 @@ public class CircularMovement : MonoBehaviour, IMovementTrigger
     private GameObject moveObject;
 
     private float t = 0;
-    private bool movementFinished;
+
+    private void Awake()
+    {
+        isFinished = true;
+    }
 
     private void Start()
     {
-        movementFinished = true;
     }
 
     private void Update()
     {
-        if (movementFinished) { return; }
+        if (isFinished) { return; }
         MoveInCircularCurve(moveObject, t);
         t += Time.deltaTime * speed;
         if (t >= 1)
         {
             MoveInCircularCurve(moveObject, t);
-            movementFinished = true;
+            isFinished = true;
             moveObject = null;
             if(nextMovementTrigger != null)
                 InitializeNextMovementTrigger(nextMovementTrigger.GetComponent<IMovementTrigger>());
@@ -85,7 +89,7 @@ public class CircularMovement : MonoBehaviour, IMovementTrigger
 
     public void Trigger()
     {
-        movementFinished = false;
+        isFinished = false;
     }
 
     private void MoveInCircularCurve(GameObject moveObject, float t)
