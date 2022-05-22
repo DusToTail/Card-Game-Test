@@ -132,7 +132,7 @@ MonoBehaviour:
   speed: 5
   useTowardsTransform: 0
   towards: {fileID: 8724225491530044922}
-  dir: 0
+  dir: {x: 0, y: 5, z: 1}
   distance: 1
 --- !u!1 &8724225492811286956
 GameObject:

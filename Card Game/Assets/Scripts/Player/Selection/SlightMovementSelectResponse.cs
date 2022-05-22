@@ -25,23 +25,12 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
 
     [Header("If local direction is specified")]
     [SerializeField]
-    private Direction dir;
+    private Vector3 dir;
     [SerializeField]
     private float distance;
 
     private float t = 0;
     private bool isSelected = false;
-
-    public enum Direction
-    {
-        Forward,
-        Backward,
-        Left,
-        Right,
-        Up,
-        Down,
-        None
-    };
 
     private void Update()
     {
@@ -98,34 +87,7 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
         }
         else
         {
-            Vector3 chosenDir = Vector3.zero;
-            switch (dir)
-            {
-                case Direction.Forward:
-                    chosenDir = moveObject.transform.forward;
-                    break;
-                case Direction.Backward:
-                    chosenDir = -moveObject.transform.forward;
-                    break;
-                case Direction.Left:
-                    chosenDir = -moveObject.transform.right;
-                    break;
-                case Direction.Right:
-                    chosenDir = moveObject.transform.right;
-                    break;
-                case Direction.Up:
-                    chosenDir = moveObject.transform.up;
-                    break;
-                case Direction.Down:
-                    chosenDir = -moveObject.transform.up;
-                    break;
-                case Direction.None:
-                    break;
-                default:
-                    break;
-
-            }
-            bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].position = moveObject.transform.position + chosenDir * distance;
+            bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].position = moveObject.transform.position + dir.normalized * distance;
             bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].rotation = moveObject.transform.rotation;
         }
     }
