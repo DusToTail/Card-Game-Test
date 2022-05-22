@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IHaveAttack
 {
-    public void Attack(IHaveHealth[] healths);
+    public IEnumerator Attack(IHaveHealth[] healths, bool directAttack);
 
     public void PlusInitialAttackDamage(int amount);
     public void MinusInitialAttackDamage(int amount);

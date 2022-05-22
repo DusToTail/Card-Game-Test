@@ -60,7 +60,8 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
         isSelected = true;
         if(t < 0) { t = 0; }
         if(t > 1) { t = 1; }
-        Initialize();
+        if(moveObject != null)
+            Initialize();
     }
     
     /// <summary>
@@ -87,7 +88,8 @@ public class SlightMovementSelectResponse : MonoBehaviour, ISelectResponse
         }
         else
         {
-            bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].position = moveObject.transform.position + dir.normalized * distance;
+            Vector3 localDir = moveObject.transform.right * dir.x + moveObject.transform.up * dir.y + moveObject.transform.forward * dir.z;
+            bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].position = moveObject.transform.position + localDir.normalized * distance;
             bezierCurve.controlPoints[bezierCurve.controlPoints.Length - 1].rotation = moveObject.transform.rotation;
         }
     }

@@ -10,7 +10,7 @@ public class PlayerDeck : MonoBehaviour, ISelectable
 {
     public Stack<GameObject> cards = new Stack<GameObject>();
     public GameObject deck;
-    public BattlePlayer battlePlayer;
+    public BattlePlayer player;
 
     [SerializeField]
     private GameObject selectResponse;
@@ -126,22 +126,29 @@ public class PlayerDeck : MonoBehaviour, ISelectable
     public void OnSelect()
     {
         if(selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        if (player.selectManager.state == SelectManager.State.DrawFromDeck && cards.Count > 0)
+        {
+            selectResponse.GetComponent<SlightMovementSelectResponse>().moveObject = cards.Peek();
+            selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        }
     }
 
     public void OnDeselect()
     {
         if (selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
-
+        if (player.selectManager.state == SelectManager.State.DrawFromDeck && cards.Count > 0)
+        {
+            selectResponse.GetComponent<ISelectResponse>().OnDeselect();
+        }
     }
 
     public void OnClick()
     {
-        if(battlePlayer.selectManager.state == SelectManager.State.DrawFromDeck)
+        if(player.selectManager.state == SelectManager.State.DrawFromDeck)
         {
             Debug.Log($"Clicked on {this.gameObject.name}");
-            StartCoroutine(battlePlayer.DrawOneFromPlayerDeck(false));
+            selectResponse.GetComponent<SlightMovementSelectResponse>().moveObject = null;
+            StartCoroutine(player.DrawOneFromPlayerDeck(false));
         }
         
     }

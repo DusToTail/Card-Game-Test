@@ -15,20 +15,20 @@ public class DissolveDeathResponse : MonoBehaviour, IDeathResponse
     private bool started = false;
     private float t = 0;
 
-    private void Update()
-    {
-        if (!started) { return; }
-        t += Time.deltaTime;
-
-        if(t > 1)
-        {
-            Destroy(transform.parent.gameObject);
-        }
-    }
-
-    public void Trigger()
+    public IEnumerator Trigger()
     {
         //transform.parent.GetComponent<Renderer>().material = disintegrateMaterial;
         started = true;
+        t = 0;
+        while(true)
+        {
+            yield return null;
+            t += Time.deltaTime;
+            if (t > 1)
+            {
+                Destroy(transform.parent.gameObject);
+                break;
+            }
+        }
     }
 }

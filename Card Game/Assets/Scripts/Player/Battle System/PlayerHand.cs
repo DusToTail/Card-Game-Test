@@ -39,13 +39,26 @@ public class PlayerHand : MonoBehaviour
     public IEnumerator AddCardToHand(GameObject card)
     {
         if(card == null) { yield break; }
+        for(int i = 0; i < cards.Count; i++)
+        {
+            card.layer = LayerMask.NameToLayer(Tags.UNSELECTABLE_LAYER);
+            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().moveObject = null;
 
+        }
         card.transform.parent = transform;
         cards.Add(card);
         // Trigger animation to move the card to hand and adjust orientation
         yield return StartCoroutine(MoveCardToHand());
 
-        card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
+        // Å¶Future Note: Add totem's ability
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            card.layer = LayerMask.NameToLayer(Tags.SELECTABLE_LAYER);
+            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().moveObject = cards[i];
+            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().initializedOnce = false;
+            cards[i].GetComponent<CardSelectable>().SetSelectResponse(inHandCardSelectResponseMovers.transform.GetChild(i).gameObject);
+        }
     }
 
     /// <summary>
@@ -99,7 +112,6 @@ public class PlayerHand : MonoBehaviour
                 // In hand to adjust for incoming card
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().Trigger();
-                yield return new WaitUntil(() => inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().isFinished);
             }
             else
             {
@@ -109,18 +121,12 @@ public class PlayerHand : MonoBehaviour
                 yield return new WaitUntil(() => toHandMovementTrigger.transform.GetComponent<IMovementTrigger>().isFinished);
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().InitializeMoveObjectTowards(cards[i], cardPositions[i]);
                 inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().Trigger();
-                yield return new WaitUntil(() => inHandMovementTriggers.transform.GetChild(i).GetComponent<IMovementTrigger>().isFinished);
             }
-
-            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().moveObject = cards[i];
-            inHandCardSelectResponseMovers.transform.GetChild(i).gameObject.GetComponent<SlightMovementSelectResponse>().initializedOnce = false;
-
-            cards[i].GetComponent<CardSelectable>().SetSelectResponse(inHandCardSelectResponseMovers.transform.GetChild(i).gameObject);
-            
         }
+        yield return new WaitForSeconds(0.5f);
     }
 
-    
+
     private void OnDrawGizmos()
     {
         if (!displayGizmos) { return; }

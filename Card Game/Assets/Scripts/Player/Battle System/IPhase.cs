@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IDeathResponse
+public interface IPhase
 {
-    public IEnumerator Trigger();
+    public IEnumerator StartPhase();
 }

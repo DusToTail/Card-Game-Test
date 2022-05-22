@@ -8,8 +8,9 @@ using UnityEngine;
 /// </summary>
 public class CardDeathResponse : MonoBehaviour, IDeathResponse
 {
-    public void Trigger()
+    public IEnumerator Trigger()
     {
+        yield return null;
         Destroy(gameObject);
     }
 }

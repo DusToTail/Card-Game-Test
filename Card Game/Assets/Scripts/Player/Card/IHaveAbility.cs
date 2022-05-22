@@ -4,9 +4,9 @@ using UnityEngine;
 
 public interface IHaveAbility
 {
-    public List<IAbility> GetAbilities();
+    public List<GameObject> GetAbilities();
 
-    public void AddAbility(IAbility ability);
+    public void AddAbility(GameObject ability);
 
-    public void RemoveAbility(IAbility ability);
+    public void RemoveAbility(GameObject ability);
 }

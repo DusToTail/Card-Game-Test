@@ -126,6 +126,7 @@ public class BattleBoard : MonoBehaviour
                 healths[i] = GetCardAtCell(oppositeCells[i]).GetComponent<AttackCard>();
         }
 
+        bool directAttack = false;
         // Trigger attack animation (movement) when attacking
         if (cell.gridPosition.y == 0)
         {
@@ -133,15 +134,19 @@ public class BattleBoard : MonoBehaviour
             // Trigger animation for attacking
             IMovementTrigger attackTrigger = allyAttackersOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>();
 
-            if (healths[0] == null)
+            if (healths[0] != null)
             {
-                // Direck Attack
-                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[1].worldPosition + transform.up);
+                // Attack opposite card(s)
+                // *** TO BE IMPLEMENTED *** Check if attacker has airborne sigil and if the attacked has mighty leap
+                directAttack = false;
+                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
+                
             }
             else
             {
-                // Attack opposite card(s)
-                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
+                // Direck Attack
+                directAttack = true;
+                attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[1].worldPosition + transform.up);
             }
             attackTrigger.Trigger();
 
@@ -153,15 +158,17 @@ public class BattleBoard : MonoBehaviour
             // Trigger animation for attacking
             IMovementTrigger attackTrigger = enemyAttackersOnBoard.transform.GetChild(cell.gridPosition.x).GetComponent<IMovementTrigger>();
 
-            if (healths[0] == null)
+            if (healths[0] != null)
             {
-                // Direck Attack
+                // Attack opposite card(s)
+                // *** TO BE IMPLEMENTED *** Check if attacker has airborne sigil and if the attacked has mighty leap
+                directAttack = false;
                 attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
-
             }
             else
             {
-                // Attack opposite card(s)
+                // Direck Attack
+                directAttack = true;
                 attackTrigger.InitializeMoveObjectTowards(card, oppositeCells[0].worldPosition + transform.up);
             }
             attackTrigger.Trigger();
@@ -169,8 +176,8 @@ public class BattleBoard : MonoBehaviour
             yield return new WaitUntil(() => attackTrigger.isFinished);
         }
 
-        // Instantly minus health of the opposing card(s) or directly
-        card.GetComponent<IHaveAttack>().Attack(healths);
+        // Process the attack damage and abilities simulation
+        yield return StartCoroutine(card.GetComponent<IHaveAttack>().Attack(healths, directAttack));
 
         isBusy = false;
     }

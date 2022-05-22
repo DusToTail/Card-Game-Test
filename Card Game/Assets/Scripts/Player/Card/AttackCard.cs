@@ -35,11 +35,25 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     [SerializeField]
     private TMPro.TextMeshPro powerTextMesh;
 
+    public delegate void CardAbilityAdded();
+    public event CardAbilityAdded OnCardAbilityAdded;
+    public delegate void CardAbilityRemoved();
+    public event CardAbilityRemoved OnCardAbilityRemoved;
+
+    public delegate void CardAttack();
+    public event CardAttack OnCardAttack;
+
+    public delegate void CardDamaged();
+    public event CardDamaged OnCardDamaged;
+    public delegate void CardDied();
+    public event CardDied OnCardDied;
+    public delegate void CardSacrificed(int sacrificeWorth);
+    public event CardSacrificed OnCardSacrificed;
 
     private int _curHealth;
     private int _curAttackDamage;
     private int _actualAttackDamage;
-    private List<IAbility> _abilityList = new List<IAbility>();
+    private List<GameObject> _abilityList = new List<GameObject>();
     private int _curSacrificeCount;
 
     private bool _isPlayed;
@@ -65,13 +79,8 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     /// 日本語：低下可能の攻撃力でカード（または相手）を行動を試みる
     /// </summary>
     /// <param name="healths"></param>
-    public void Attack(IHaveHealth[] healths)
+    public IEnumerator Attack(IHaveHealth[] healths, bool directAttack)
     {
-        // Check whether the attack is going to be direct or not
-        bool directAttack = false;
-        if(healths == null) { directAttack = true; }
-        if(healths[0] == null) { directAttack = true; }
-
         // Initialize deductable attack damage (by minus opposite card's health)
         _actualAttackDamage = _curAttackDamage;
 
@@ -91,7 +100,7 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
                 Debug.Log($"{cardName} attack opposite enemy for {_actualAttackDamage}");
 
                 // Trigger enemy's TriggerHit function
-                healths[i].TriggerHit(_actualAttackDamage);
+                yield return StartCoroutine(healths[i].TriggerHit(_actualAttackDamage));
 
                 // Deduct from attack damage
                 _actualAttackDamage -= opponentHealth;
@@ -262,15 +271,15 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     /// 日本語：攻撃された後、反応する。体力を低下したり、能力を発揮したりするなど
     /// </summary>
     /// <param name="amount"></param>
-    public void TriggerHit(int amount)
+    public IEnumerator TriggerHit(int amount)
     {
         Debug.Log($"{gameObject.name} takes {amount} damage whilst having {GetCurrentHealth()}");
         MinusCurrentHealth(amount);
         if(HealthIsZero())
         {
-            Debug.Log($"{gameObject.name}'s health is zero and is destroyed");
+            Debug.Log($"{gameObject.name}'s health is zero and will be destroyed");
             // Trigger any death animation
-            Die();
+            yield return StartCoroutine(Die());
         }
     }
 
@@ -289,10 +298,10 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     /// English: Trigger the card's death response
     /// 日本語：カードのデス反応をトリガーする
     /// </summary>
-    public void Die()
+    public IEnumerator Die()
     {
-        if(deathResponse == null) { return; }
-        deathResponse.GetComponent<IDeathResponse>().Trigger();
+        if(deathResponse == null) { yield break; }
+        yield return StartCoroutine(deathResponse.GetComponent<IDeathResponse>().Trigger());
     }
 
     /// <summary>
@@ -386,10 +395,12 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     /// 日本語：能力をこのカードに追加する
     /// </summary>
     /// <param name="ability"></param>
-    public void AddAbility(IAbility ability)
+    public void AddAbility(GameObject ability)
     {
         // Trigger spin animation to prevent player from looking at the front of the card when adding the ability
         // Add a game object containing the ability
+
+        _abilityList.Add(ability);
     }
 
     /// <summary>
@@ -398,10 +409,12 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     /// 日本語：このカードから能力を抜く
     /// </summary>
     /// <param name="ability"></param>
-    public void RemoveAbility(IAbility ability)
+    public void RemoveAbility(GameObject ability)
     {
         // Trigger a removal animation (similar to Inscryption's paint brush item)
         // Remove the according game object containing the ability
+
+        _abilityList.Remove(ability);
     }
 
     /// <summary>
@@ -409,7 +422,7 @@ public class AttackCard : MonoBehaviour, IBasicInfo, IHaveHealth, IHaveAttack, I
     /// 日本語：このカードの能力リストを返す
     /// </summary>
     /// <returns></returns>
-    public List<IAbility> GetAbilities()
+    public List<GameObject> GetAbilities()
     {
         return _abilityList;
     }

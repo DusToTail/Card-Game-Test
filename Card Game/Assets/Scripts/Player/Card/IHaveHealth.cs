@@ -13,7 +13,7 @@ public interface IHaveHealth
     public int GetCurrentHealth();
     public int GetInitialHealth();
 
-    public void TriggerHit(int amount);
+    public IEnumerator TriggerHit(int amount);
     public bool HealthIsZero();
-    public void Die();
+    public IEnumerator Die();
 }

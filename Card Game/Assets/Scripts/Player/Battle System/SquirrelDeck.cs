@@ -73,14 +73,20 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
     public void OnSelect()
     {
         if (selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        if (player.selectManager.state == SelectManager.State.DrawFromDeck && cards.Count > 0)
+        {
+            selectResponse.GetComponent<SlightMovementSelectResponse>().moveObject = cards.Peek();
+            selectResponse.GetComponent<ISelectResponse>().OnSelect();
+        }
     }
 
     public void OnDeselect()
     {
         if (selectResponse == null) { return; }
-        selectResponse.GetComponent<ISelectResponse>().OnDeselect();
-
+        if (player.selectManager.state == SelectManager.State.DrawFromDeck && cards.Count > 0)
+        {
+            selectResponse.GetComponent<ISelectResponse>().OnDeselect();
+        }
     }
 
     public void OnClick()
@@ -88,6 +94,7 @@ public class SquirrelDeck : MonoBehaviour, ISelectable
         if(player.selectManager.state == SelectManager.State.DrawFromDeck)
         {
             Debug.Log($"Clicked on {this.gameObject.name}");
+            selectResponse.GetComponent<SlightMovementSelectResponse>().moveObject = null;
             StartCoroutine(player.DrawOneSquirrel(false));
         }
     }

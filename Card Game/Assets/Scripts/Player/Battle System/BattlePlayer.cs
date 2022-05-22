@@ -15,18 +15,18 @@ public class BattlePlayer : MonoBehaviour
     public SquirrelDeck squirrelDeck;
     public PlayerHand hand;
     public BattleBoard board;
-    public BattleEventController battleController;
+    public PhaseController battleController;
     
     public SelectManager selectManager { get; private set; }
 
     private void OnEnable()
     {
-        BattleEventController.OnPreparationFinished += StartWithInitialHand;
+        PhaseController.OnPreparationFinished += StartWithInitialHand;
     }
 
     private void OnDisable()
     {
-        BattleEventController.OnPreparationFinished -= StartWithInitialHand;
+        PhaseController.OnPreparationFinished -= StartWithInitialHand;
 
     }
 
@@ -88,6 +88,7 @@ public class BattlePlayer : MonoBehaviour
         if (playerDeck.cards.Count == 0) { yield break; }
         Debug.Log("Draw one from player deck");
         GameObject card = playerDeck.cards.Pop();
+        selectManager.SetSelectState(SelectManager.State.None);
         yield return StartCoroutine(hand.AddCardToHand(card));
         if (!isInitialHand)
             selectManager.SetSelectState(SelectManager.State.CardInHand);
@@ -103,6 +104,7 @@ public class BattlePlayer : MonoBehaviour
         if (squirrelDeck.cards.Count == 0) { yield break; }
         Debug.Log("Draw one from squirrel deck");
         GameObject card = squirrelDeck.cards.Pop();
+        selectManager.SetSelectState(SelectManager.State.None);
         yield return StartCoroutine(hand.AddCardToHand(card));
         if(!isInitialHand)
             selectManager.SetSelectState(SelectManager.State.CardInHand);
@@ -111,7 +113,7 @@ public class BattlePlayer : MonoBehaviour
 
     public void InjectDependency()
     {
-        playerDeck.battlePlayer = this;
+        playerDeck.player = this;
         squirrelDeck.player = this;
     }
 
